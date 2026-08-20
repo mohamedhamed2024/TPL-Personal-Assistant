@@ -1,0 +1,4 @@
+{
+  "name": "TPL Personal Assistant — Pattern Data Delivery",
+  "install": "bash .cursor/scripts/cloud-agent-install.sh"
+}
