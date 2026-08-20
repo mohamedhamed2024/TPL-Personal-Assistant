@@ -1,0 +1,27 @@
+To: michael.girgis@integrant.com
+Subject: OC Daily Time Log — 7 Jul 2026 — Michael Girgis
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<html><body style="font-family:Segoe UI,Arial,sans-serif;font-size:14px;color:#222;">
+<h2 style="margin-bottom:4px;">OC Daily Time Log — 7 Jul 2026</h2>
+<p style="color:#555;margin-top:0;">Hi <strong>Michael</strong>, your OC subtask work logged on <strong>7 Jul 2026</strong> (day only, not cumulative). <strong>1d = 7h.</strong></p>
+<hr/>
+
+<h3 style="color:#0066cc;">Your total</h3>
+<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-size:14px;">
+<tr style="background:#f0f4f8;"><th>Assignee</th><th>Total</th></tr>
+<tr style="font-weight:bold;"><td>Michael Girgis</td><td>1h 15m</td></tr>
+</table>
+
+<h3 style="color:#0066cc;margin-top:24px;">Your tasks</h3>
+<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-size:14px;">
+<tr style="background:#f0f4f8;"><th>Task</th><th>Time spent (7 Jul)</th></tr>
+<tr><td><a href="https://ontellus.atlassian.net/browse/OC-9723">OC-9723</a> — QA: validate SC record-type cap 4-&gt;3 fix (SOQL-101 reopen) on pddev</td><td>45m</td></tr>
+<tr><td><a href="https://ontellus.atlassian.net/browse/OC-9725">OC-9725</a> — QA (re-verify 2026-07-07): Submit-with-AutoPay on a saved Draft with authorization uploaded — fresh live capture</td><td>30m</td></tr>
+</table>
+
+<hr/>
+<p style="color:#888;font-size:12px;margin-top:24px;">From Daily TimeLog/Daily-Time-Log-2026-07-07.md</p>
+</body></html>

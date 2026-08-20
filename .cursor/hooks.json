@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeSubmitPrompt": [
+      {
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File .cursor/hooks/work-log-report-hook.ps1 -HookEvent beforeSubmitPrompt",
+        "matcher": "UserPromptSubmit"
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File .cursor/hooks/work-log-report-hook.ps1 -HookEvent afterFileEdit"
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File .cursor/hooks/work-log-report-hook.ps1 -HookEvent postToolUse",
+        "matcher": "Write|StrReplace"
+      }
+    ],
+    "stop": [
+      {
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File .cursor/hooks/work-log-report-hook.ps1 -HookEvent stop",
+        "loop_limit": 2
+      }
+    ]
+  }
+}

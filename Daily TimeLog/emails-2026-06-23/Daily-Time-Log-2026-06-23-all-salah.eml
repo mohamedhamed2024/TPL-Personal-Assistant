@@ -1,0 +1,37 @@
+To: mahmoud.salah@integrant.com
+Subject: OC Daily Time Log — 23 Jun 2026
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<html><body style="font-family:Segoe UI,Arial,sans-serif;font-size:14px;color:#222;">
+<h2 style="margin-bottom:4px;">OC Daily Time Log — 23 Jun 2026</h2>
+<p style="color:#555;margin-top:0;">Subtasks in the OC project with work logged on <strong>23 Jun 2026</strong>. Time reflects worklog entries for that day only (not cumulative task totals). <strong>1d = 7h.</strong></p>
+<hr/>
+
+<h3 style="color:#0066cc;">Daily total by assignee</h3>
+<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-size:14px;">
+<tr style="background:#f0f4f8;"><th>Assignee</th><th>Total</th></tr>
+<tr><td>Islam Fathy</td><td>3h</td></tr>
+<tr><td>Michael Girgis</td><td>15h</td></tr>
+<tr><td>Sara Hassan</td><td>1h</td></tr>
+<tr style="font-weight:bold;background:#f9f9f9;"><td>All</td><td>19h</td></tr>
+</table>
+
+<h3 style="color:#0066cc;margin-top:24px;">Detail by task</h3>
+<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-size:14px;">
+<tr style="background:#f0f4f8;"><th>Assignee</th><th>Task</th><th>Time spent (23 Jun)</th></tr>
+<tr><td>Islam Fathy</td><td><a href="https://ontellus.atlassian.net/browse/OC-9641">OC-9641</a> — Explore &amp; Test scenarios</td><td>2h</td></tr>
+<tr><td>Islam Fathy</td><td><a href="https://ontellus.atlassian.net/browse/OC-9642">OC-9642</a> — Meetings &amp; discussions</td><td>1h</td></tr>
+<tr><td>Michael Girgis</td><td><a href="https://ontellus.atlassian.net/browse/OC-9643">OC-9643</a> — Dev: fix Change Card popup re-displaying current card (DEF-003 / FR-049)</td><td>3h</td></tr>
+<tr><td>Michael Girgis</td><td><a href="https://ontellus.atlassian.net/browse/OC-9644">OC-9644</a> — Dev: AutoPay split — design &amp; analysis (lean controller vs feature-06 service)</td><td>2h</td></tr>
+<tr><td>Michael Girgis</td><td><a href="https://ontellus.atlassian.net/browse/OC-9645">OC-9645</a> — Dev: implement lean SavedPaymentManagementController + feature-06 SavedPaymentAutoPayService</td><td>4h</td></tr>
+<tr><td>Michael Girgis</td><td><a href="https://ontellus.atlassian.net/browse/OC-9646">OC-9646</a> — Dev: UAT-safe Apex tests + lift lean controller to &gt;=75% coverage</td><td>2h</td></tr>
+<tr><td>Michael Girgis</td><td><a href="https://ontellus.atlassian.net/browse/OC-9647">OC-9647</a> — DevOps: deploy-hub refresh + manifest re-scope for features 02 / 03 / 06</td><td>1h</td></tr>
+<tr><td>Michael Girgis</td><td><a href="https://ontellus.atlassian.net/browse/OC-9648">OC-9648</a> — QA/Deploy: pddev deploy + live portal verify + UAT change-set validation + rollback</td><td>3h</td></tr>
+<tr><td>Sara Hassan</td><td><a href="https://ontellus.atlassian.net/browse/OC-9639">OC-9639</a> — Meetings &amp; collab (Tue 23 Jun)</td><td>1h</td></tr>
+</table>
+
+<hr/>
+<p style="color:#888;font-size:12px;margin-top:24px;">From Daily TimeLog/Daily-Time-Log-2026-06-23.md</p>
+</body></html>
