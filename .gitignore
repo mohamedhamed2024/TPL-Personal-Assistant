@@ -1,0 +1,6 @@
+# Python bytecode (e.g. produced by py_compile during environment setup)
+__pycache__/
+*.pyc
+
+# Standup/Jira extraction artifacts (see AGENTS.md: "Delete temp files")
+_standup_extract.txt
