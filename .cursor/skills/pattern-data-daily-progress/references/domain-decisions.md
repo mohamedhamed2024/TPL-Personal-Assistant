@@ -11,7 +11,7 @@ Active work is **PD sandbox finalize → UAT sandbox (feature-by-feature) → Pr
 | UAT sandbox | **2026-08-31** |
 | Production | **2026-09-30** |
 
-Dates are **indicative** — **Austin** (engineering manager) may change deployment order or targets after each meeting. Update from Austin meeting transcript when provided.
+Dates are **indicative** — **Austin** (engineering manager) may change deployment order or targets after each meeting. Update from the latest **Austin-class** transcript when provided.
 
 ## Austin — engineering manager
 
@@ -21,8 +21,28 @@ Dates are **indicative** — **Austin** (engineering manager) may change deploym
 
 - Austin may **change the plan frequently** — do not hard-code a fixed release sequence beyond what Austin last confirmed
 - **Deployment plan (Austin)** section in each report reflects the latest Austin input
-- Transcript path: `Transcript/Austin Meeting/Pattern-Data-Austin-YYYY-MM-DD.docx`
-- When Austin and Jira disagree on priority, **Austin meeting transcript wins** for deployment order; Jira wins for dev status
+- **Austin-class transcripts** (latest dated file wins):
+  - `Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD` — PD Review with Austin (plain text, `.txt`, or `.docx`)
+  - `Transcript/Austin Meeting/Pattern-Data-Austin-YYYY-MM-DD.docx` — shorter Austin meeting
+- Prefer **PD Review** when both exist for the same date
+- When Austin and Jira disagree on priority, **Austin-class transcript wins** for deployment order; Jira wins for dev status
+- Incomplete PD Review (timestamp jump): backfill only from Jira comments titled **Austin requirement sync** on that date with `Call / source: PD Review`
+
+## Standing decisions — PD Review 2026-08-20
+
+Apply until a later Austin-class transcript overrides:
+
+| Topic | Decision |
+| --- | --- |
+| After current wrap-up | **Approved Fee overhaul first**, then other reuse work |
+| Applied payment | Applied-payment process should use the **new approved fee** |
+| CSI invoice line items | Later — status sync / retrieval first; line items so CSI can display them come after |
+| PCI cart | Functionally works; **look Monday** (week of 2026-08-24) — possible page redesign only |
+| Account / new-account flag | Sarah asked which features the flag controls. **No new Account Active Flag this release** — emergency firm SSO suspend is suffix the firm external ID (`-cancelled` / `-suspended`) |
+| Autopay threshold (new accounts) | Leave **blank** (not zero); GetThreshold falls back to partner master |
+| Status sync reuse | Design for reuse beyond Pattern Data (other integrations) |
+| Islam access | Datavant account **in progress** (Austin answering a question); hoped the week of 2026-08-24 |
+| Sarah | PTO after 2026-08-20; reconvene **Monday** |
 
 ## Jira source
 
@@ -49,7 +69,7 @@ Per feature: **Forward + Rollback deploy packages** (+ optional **Settings** pac
 | Sarah | Jira assignee |
 | Islam | **Standup transcript** when available; otherwise default: **PD sandbox testing of [LNI-3763](https://datavant.atlassian.net/browse/LNI-3763) RequestShare** (Sarah's implementation) |
 
-Follow up with **Austin on Islam's Jira access** until resolved — action owner **Hamed** or **Nabawy** (not Salah).
+Follow up with **Austin on Islam's Datavant / Jira access** until resolved — action owner **Hamed** or **Nabawy** (not Salah). As of PD Review **2026-08-20**, Austin said an account is **in progress** (hoped week of 2026-08-24).
 
 ## PM / escalation owners
 
