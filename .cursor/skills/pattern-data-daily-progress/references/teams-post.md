@@ -12,22 +12,17 @@ The morning Cursor Automation writes today's progress markdown, opens a PR, then
 1. Open [Power Automate](https://make.powerautomate.com) (or Teams **Workflows**).
 2. **Create** → **Instant cloud flow**.
 3. Trigger: **When an HTTP request is received**.
-4. Paste this JSON schema into **Request Body JSON Schema**:
+4. Paste this JSON schema into **Request Body JSON Schema** (root **must** be an Adaptive Card):
 
 ```json
 {
   "type": "object",
   "properties": {
-    "title": { "type": "string" },
-    "asOf": { "type": "string" },
-    "uatReady": { "type": "string" },
-    "glance": { "type": "string" },
-    "teamFocus": { "type": "string" },
-    "actions": { "type": "string" },
-    "prUrl": { "type": "string" },
-    "filePath": { "type": "string" },
-    "text": { "type": "string" },
-    "adaptiveCard": { "type": "string" }
+    "type": { "type": "string" },
+    "$schema": { "type": "string" },
+    "version": { "type": "string" },
+    "body": { "type": "array" },
+    "actions": { "type": "array" }
   }
 }
 ```
@@ -36,7 +31,8 @@ The morning Cursor Automation writes today's progress markdown, opens a PR, then
    - **Post as:** Flow bot
    - **Post in:** Channel
    - **Team / Channel:** the Pattern Data progress channel Amr uses
-   - **Adaptive Card:** `triggerBody()?['adaptiveCard']` — this is a **JSON string** starting with `{"type":"AdaptiveCard"`. Do **not** pass the whole `triggerBody()` (that fails with *Property 'type' must be 'AdaptiveCard'*).
+   - **Adaptive Card:** `string(triggerBody())`  
+     The HTTP body **is** the card (`"type": "AdaptiveCard"`). Do **not** use `triggerBody()?['adaptiveCard']` and do **not** pass a Teams `"type": "message"` wrapper.
 6. Save the flow. Copy the **HTTP POST URL**.
 7. In [Cursor Cloud Agents](https://cursor.com/dashboard/cloud-agents) → this repo's environment → **Secrets**, add:
 
@@ -44,26 +40,31 @@ The morning Cursor Automation writes today's progress markdown, opens a PR, then
    |------|--------|
    | `TEAMS_WEBHOOK_URL` | the HTTP POST URL from step 6 |
 
-8. Optional: add a second action **Post message in a chat or channel** with `triggerBody()?['text']` as a fallback if the Adaptive Card action fails.
+## Existing flow — fix *Property 'type' must be 'AdaptiveCard'*
+
+The flowbot received JSON whose root `type` was `message` (or a nested field), not `AdaptiveCard`.
+
+1. Open the **Post adaptive card** action.
+2. Set **Adaptive Card** to **`string(triggerBody())`**.
+3. Save.
+4. Re-run `post_progress_to_teams.py` (the script now POSTs the card as the entire body).
 
 ## What the script sends
 
-`scripts/post_progress_to_teams.py` POSTs:
+The POST body **is** the Adaptive Card:
 
-- **`adaptiveCard`** — JSON **string** of the Adaptive Card (for **Post adaptive card in a chat or channel**)
-- **`type` / `attachments`** — Teams Workflows webhook wrapper (if you used “When a Teams webhook request is received”)
-- **`text` plus glance / teamFocus / actions** — fallback for **Post message in a chat or channel**
+```json
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.2",
+  "body": [ ]
+}
+```
 
-## If the HTTP request succeeds (202) but the flow fails
+Teams Adaptive Cards cannot attach a `.md` or HTML file. The script **inlines** the full progress report as TextBlocks under **Full report** (HTML lists/tables flattened to text). If the card would exceed ~25 KB, the report text is truncated.
 
-The trigger accepted the POST; the Teams action rejected the card.
-
-1. Open the failed run → the **Post adaptive card** (or **Post card**) action → copy the error.
-2. Set that action’s Adaptive Card field to **`triggerBody()?['adaptiveCard']`**, not the entire body.
-3. If the field still shows as an object in the designer, use **`string(triggerBody()?['adaptiveCard'])`**.
-4. Optional fallback: **Post message in a chat or channel** with `triggerBody()?['text']`.
-
-Teams Adaptive Cards are size-capped (~28 KB). The card is a **summary** (glance, team focus, open actions). The full markdown lives on the PR (`prUrl`).
+Keep **Adaptive Card** = `string(triggerBody())`.
 
 ## Test locally (no post)
 
@@ -89,4 +90,4 @@ Exit codes: `0` success · `2` missing webhook or missing report file · `1` HTT
 
 ## Optional later
 
-Add **Create file** (SharePoint / Teams Files) if you want the full `.md` attached in the channel. Keep the card + PR link as the first version — it is smaller and more reliable.
+A true file in the channel **Files** tab still needs a SharePoint **Create file** action (not the Adaptive Card).

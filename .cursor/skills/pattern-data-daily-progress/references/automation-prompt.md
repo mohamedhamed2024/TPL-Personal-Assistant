@@ -30,10 +30,10 @@ Target today's calendar date. This is a weekday-morning Jira-only run:
 3. Sync Datavant Jira on DVI-1086 (epics → open stories → open subtasks) before editing the report. Parse story comments for PR and changeset status. Exclude Youssef Yahia. Team focus: Michael and Sarah from Jira assignees.
 4. Update all report sections per the skill template. Recompute Path to UAT N/M. Replace the Standup action items section: if there was no standup transcript, keep prior open Jira-driven next steps only — do not fabricate owners or meetings.
 5. Optionally align Testing Updates.md. Delete temp extract files.
-6. Open a pull request with today's progress markdown (and Testing Updates.md if changed). Do not push to the default branch. Do not force-push.
+6. git fetch origin, rebase onto the latest default branch if needed, then open a pull request with today's progress markdown (and Testing Updates.md if changed). Do not push to the default branch. Do not force-push.
 7. After the PR exists, run:
    python .cursor/skills/pattern-data-daily-progress/scripts/post_progress_to_teams.py --pr-url "<the PR url>"
-   TEAMS_WEBHOOK_URL is a Cloud Agent secret. Never print, commit, or echo the webhook URL.
+   The card inlines the full progress report (Teams cannot attach .md or HTML). TEAMS_WEBHOOK_URL is a Cloud Agent secret. Never print, commit, or echo the webhook URL.
 8. Reply with the skill's "When done" summary plus the PR URL and whether the Teams post succeeded.
 
 Do not use wave / Wave 1 / Wave 2 language.

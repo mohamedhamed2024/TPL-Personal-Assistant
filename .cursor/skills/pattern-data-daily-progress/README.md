@@ -32,7 +32,8 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 9. Extract action items and append **Standup action items** table as the last section
 10. Optionally sync `Testing Updates.md`
 11. Delete temp files
-12. Post a Teams summary via `scripts/post_progress_to_teams.py` when `TEAMS_WEBHOOK_URL` is set; otherwise remind the user to post the full `.md`
+12. `git fetch origin` before opening a PR; rebase onto the default branch if needed
+13. Post a Teams Adaptive Card (summary + full report text) via `scripts/post_progress_to_teams.py` when `TEAMS_WEBHOOK_URL` is set
 
 ## Features
 

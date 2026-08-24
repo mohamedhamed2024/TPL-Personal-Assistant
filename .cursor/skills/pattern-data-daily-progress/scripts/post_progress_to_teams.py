@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""POST a truncated Adaptive Card summary of today's Pattern Data progress report.
+"""POST today's Pattern Data progress report as a Teams Adaptive Card.
 
-Reads Daily Progress/pattern-data-delivery-progress-YYYY-MM-DD.md and POSTs JSON
-to TEAMS_WEBHOOK_URL (Power Automate HTTP trigger). Loads repo-root .env.local if
-the variable is not already in the environment. Never print the webhook URL.
+Reads Daily Progress/pattern-data-delivery-progress-YYYY-MM-DD.md and POSTs the
+card JSON (root type AdaptiveCard) to TEAMS_WEBHOOK_URL. Inlines the full report
+as TextBlocks — Teams flowbot cannot attach .md or HTML. Loads repo-root
+.env.local if the variable is not already in the environment. Never print the webhook URL.
 
 Usage (from repo root):
   python .cursor/skills/pattern-data-daily-progress/scripts/post_progress_to_teams.py --dry-run
@@ -25,6 +26,8 @@ from pathlib import Path
 MAX_GLANCE = 1200
 MAX_TEAM = 800
 MAX_ACTIONS = 800
+MAX_REPORT = 18000
+TEXTBLOCK_CHUNK = 3500
 MAX_CARD_BYTES = 25000
 HTTP_TIMEOUT = 30
 
@@ -55,6 +58,56 @@ def strip_md(text: str) -> str:
     text = re.sub(r"`+", "", text)
     text = re.sub(r"\s+", " ", text).strip()
     return text
+
+
+def html_lists_to_text(text: str) -> str:
+    text = re.sub(r"<li[^>]*>", "- ", text, flags=re.I)
+    text = re.sub(r"</li>", "\n", text, flags=re.I)
+    text = re.sub(r"</?ul[^>]*>", "\n", text, flags=re.I)
+    text = re.sub(r"</?ol[^>]*>", "\n", text, flags=re.I)
+    return strip_html(text)
+
+
+def markdown_to_card_text(markdown: str) -> str:
+    """Flatten .md (including HTML lists/tables) into Adaptive Card TextBlock text.
+
+    Teams flowbot cannot attach a file or render HTML inside the card.
+    """
+    lines: list[str] = []
+    for raw in markdown.splitlines():
+        stripped = raw.strip()
+        if stripped == "---":
+            continue
+        if re.match(r"^\|?\s*[:\-| ]+\s*$", stripped):
+            continue
+        if stripped.startswith("|"):
+            cells = [strip_md(c) for c in stripped.strip("|").split("|")]
+            lines.append(" · ".join(c for c in cells if c))
+            continue
+        line = html_lists_to_text(raw)
+        line = re.sub(r"^#{1,6}\s+", "", line)
+        line = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r"\1", line)
+        line = line.replace("**", "")
+        lines.append(line)
+    text = "\n".join(lines)
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
+
+
+def chunk_text(text: str, size: int) -> list[str]:
+    if not text:
+        return []
+    chunks: list[str] = []
+    remaining = text
+    while remaining:
+        if len(remaining) <= size:
+            chunks.append(remaining)
+            break
+        split_at = remaining.rfind("\n", 0, size)
+        if split_at < size // 2:
+            split_at = size
+        chunks.append(remaining[:split_at].rstrip())
+        remaining = remaining[split_at:].lstrip("\n")
+    return chunks
 
 
 def load_env_local(repo: Path) -> None:
@@ -197,7 +250,15 @@ def build_adaptive_card(payload: dict[str, str]) -> dict:
             "wrap": True,
             "spacing": "Medium",
         },
+        {
+            "type": "TextBlock",
+            "weight": "Bolder",
+            "text": "Full report",
+            "spacing": "Large",
+        },
     ]
+    for chunk in chunk_text(payload.get("reportText", ""), TEXTBLOCK_CHUNK):
+        body.append({"type": "TextBlock", "text": chunk or "—", "wrap": True, "spacing": "Small"})
     card: dict = {
         "type": "AdaptiveCard",
         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
@@ -222,6 +283,7 @@ def shrink_payload(fields: dict[str, str]) -> dict[str, str]:
         fields["glance"] = truncate(fields.get("glance", ""), glance_limit)
         fields["teamFocus"] = truncate(fields.get("teamFocus", ""), team_limit)
         fields["actions"] = truncate(fields.get("actions", ""), actions_limit)
+        fields["reportText"] = truncate(fields.get("reportText", ""), MAX_REPORT if glance_limit == MAX_GLANCE else max(800, glance_limit * 8))
         encoded = json.dumps(build_body(fields), ensure_ascii=False).encode("utf-8")
         if len(encoded) <= MAX_CARD_BYTES:
             return fields
@@ -229,43 +291,13 @@ def shrink_payload(fields: dict[str, str]) -> dict[str, str]:
 
 
 def build_body(fields: dict[str, str]) -> dict:
-    card = build_adaptive_card(fields)
-    # Power Automate "Post adaptive card" expects a JSON *string* whose root
-    # type is AdaptiveCard — not the whole HTTP body, and not a nested object.
-    card_json = json.dumps(card, ensure_ascii=False, separators=(",", ":"))
-    summary_parts = [
-        fields["title"],
-        f"As of {fields['asOf']} · UAT-ready {fields['uatReady']}",
-        "Status at a glance",
-        fields["glance"],
-        "Team focus",
-        fields["teamFocus"],
-        "Open actions",
-        fields["actions"],
-        fields["filePath"],
-    ]
-    if fields.get("prUrl"):
-        summary_parts.append(fields["prUrl"])
-    return {
-        "type": "message",
-        "attachments": [
-            {
-                "contentType": "application/vnd.microsoft.card.adaptive",
-                "contentUrl": None,
-                "content": card,
-            }
-        ],
-        "title": fields["title"],
-        "asOf": fields["asOf"],
-        "uatReady": fields["uatReady"],
-        "glance": fields["glance"],
-        "teamFocus": fields["teamFocus"],
-        "actions": fields["actions"],
-        "prUrl": fields.get("prUrl", ""),
-        "filePath": fields["filePath"],
-        "text": "\n\n".join(part for part in summary_parts if part),
-        "adaptiveCard": card_json,
-    }
+    """HTTP body must itself be an Adaptive Card.
+
+    Power Automate Post adaptive card (flowbot) calls AdaptiveCard.FromJson on
+    whatever is in the Adaptive Card field. If the root type is "message" (Teams
+    webhook wrapper) it fails: Property 'type' must be 'AdaptiveCard'.
+    """
+    return build_adaptive_card(fields)
 
 
 def resolve_report(repo: Path, report_date: str, explicit: Path | None) -> Path:
@@ -288,6 +320,7 @@ def build_fields(markdown: str, report_path: Path, report_date: str, pr_url: str
         "actions": format_named_table(action_rows, ("Owner",), "Action"),
         "prUrl": pr_url,
         "filePath": report_path.as_posix() if report_path.is_absolute() else str(report_path),
+        "reportText": markdown_to_card_text(markdown),
     }
     try:
         fields["filePath"] = report_path.resolve().relative_to(find_repo_root()).as_posix()

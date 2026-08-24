@@ -60,7 +60,8 @@ Copy this checklist and track progress:
 - [ ] 9. Replace Standup action items table at end of file
 - [ ] 10. Optionally sync Testing Updates.md
 - [ ] 11. Delete temp extract files
-- [ ] 12. Post Teams summary (automation: run post_progress_to_teams.py) or remind user to post the full .md
+- [ ] 12. git fetch origin before opening a PR (rebase onto default branch if needed; do not push to main)
+- [ ] 13. Post Teams Adaptive Card (full report inlined) via post_progress_to_teams.py
 ```
 
 ### Step 1 — Bootstrap
@@ -134,7 +135,17 @@ Apply standing business rules. See [references/domain-decisions.md](references/d
 
 Align phase summary with today's progress. Set `Last updated` and `Updated by: Standup sync (pattern-data-delivery-progress-YYYY-MM-DD)`.
 
-### Step 9 — Post-update
+### Step 9 — Fetch before PR
+
+When opening a pull request (automation or when the user asks for a PR):
+
+1. `git fetch origin` (or the remote that tracks the default branch)
+2. Rebase the working branch onto the latest default branch if it has moved
+3. Then open the PR
+
+Do **not** push to the default branch. Do **not** force-push.
+
+### Step 10 — Post-update
 
 Amr requested the progress report in Teams.
 
@@ -144,7 +155,7 @@ Amr requested the progress report in Teams.
 python .cursor/skills/pattern-data-daily-progress/scripts/post_progress_to_teams.py --pr-url "<PR url if any>"
 ```
 
-Never print or commit the webhook URL. Setup: [references/teams-post.md](references/teams-post.md).
+The Adaptive Card includes a summary **and** the full report text (markdown flattened; Teams flowbot cannot attach a file or render HTML). Never print or commit the webhook URL. Setup: [references/teams-post.md](references/teams-post.md).
 
 **Interactive chat:** if the webhook is not configured, remind the user to post the **full progress `.md`** to Teams after standup (with source file attached).
 
