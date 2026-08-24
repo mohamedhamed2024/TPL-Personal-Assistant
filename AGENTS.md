@@ -23,7 +23,8 @@ Read these on demand when a task requires deeper context. Do not load them all p
 |------|---------|
 | `Daily Progress/pattern-data-delivery-progress-YYYY-MM-DD.md` | Dated delivery progress report (primary deliverable) |
 | `Transcript/ChartSwap Daily Stand up/ChartSwap-Daily-Stand-up-YYYY-MM-DD.docx` | Daily standup transcript source |
-| `Transcript/Austin Meeting/Pattern-Data-Austin-YYYY-MM-DD.docx` | Austin engineering-manager meeting — deployment plan and dates |
+| `Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD` | PD Review with Austin — primary Austin-class source (plain text or `.docx`) |
+| `Transcript/Austin Meeting/Pattern-Data-Austin-YYYY-MM-DD.docx` | Shorter Austin engineering-manager meeting — deployment plan and dates |
 | `Daily Actions/daily-actions-YYYY-MM-DD.md` | Standup action items (optional) |
 | `Testing Updates.md` | Live testing tracker — sync after progress updates |
 | `Daily TimeLog/Daily-Time-Log-YYYY-MM-DD.md` | OC subtask worklog summary for a calendar day |
@@ -31,6 +32,8 @@ Read these on demand when a task requires deeper context. Do not load them all p
 | `.cursor/skills/pattern-data-daily-progress/references/document-template.md` | Report section templates and formatting rules |
 | `.cursor/skills/pattern-data-daily-progress/references/jira-sync.md` | Datavant DVI-1086 JQL and PR/changeset parsing |
 | `.cursor/skills/pattern-data-daily-progress/references/salesforce-deploy.md` | Changeset 3-pack rules and sandbox gates |
+| `.cursor/skills/pattern-data-daily-progress/references/teams-post.md` | Power Automate webhook for Teams Adaptive Card |
+| `.cursor/skills/pattern-data-daily-progress/references/automation-prompt.md` | Weekday-morning Cursor Automation prompt |
 | `.cursor/skills/daily-time-log/references/document-template.md` | Daily time log table layout and 1d = 7h rules |
 | `.cursor/skills/send-daily-timelog/references/recipient-map.md` | Integrant email addresses for time log reminders |
 | `.cursor/skills/daily-actions/references/document-template.md` | Daily actions table layout, owners, categories |
@@ -41,9 +44,9 @@ Read these on demand when a task requires deeper context. Do not load them all p
 - **Jira is source of truth** for feature delivery — re-fetch DVI-1086 hierarchy (LNI epics → stories → subtasks) before each progress update.
 - **Team focus:** Michael and Sarah from Jira assignees; Islam from standup (default: **RequestShare / LNI-3763** testing on pddev). **Exclude Youssef Yahia** — off project; legacy Jira subtasks are ignored.
 - **Changesets:** each feature needs Feature + Rollback CS (+ optional Properties CS); validate on target sandbox; PATTERNDATA wordings must be approved before attach.
-- **Austin (engineering manager)** sets deployment priority — update **Deployment plan (Austin)** from meeting transcript when provided; no wave-based release language.
+- **Austin (engineering manager)** sets deployment priority — update **Deployment plan (Austin)** from PD Review or Austin meeting transcript when provided; no wave-based release language.
 - **UAT promotion** is feature-by-feature per Austin's plan, not one mega-changeset.
-- **Post-update reminder** — Amr requested the full progress `.md` posted to Teams after standup.
+- **Teams** — weekday-morning automation posts a summary card via `post_progress_to_teams.py` + Power Automate (`TEAMS_WEBHOOK_URL` secret). Interactive runs: remind the user to post the full progress `.md` after standup (Amr).
 - **Delete temp files** — remove `_standup_extract.txt` and other extraction artifacts when done.
 
 ---

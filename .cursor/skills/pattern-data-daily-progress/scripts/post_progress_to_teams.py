@@ -1,114 +1,393 @@
 #!/usr/bin/env python3
-"""Post today's Pattern Data progress report summary to Teams.
+"""POST today's Pattern Data progress report as a Teams Adaptive Card.
 
-Reads TEAMS_WEBHOOK_URL from the environment. Never prints, logs, or
-commits the webhook URL.
+Reads Daily Progress/pattern-data-delivery-progress-YYYY-MM-DD.md and POSTs the
+card JSON (root type AdaptiveCard) to TEAMS_WEBHOOK_URL. Inlines the full report
+as TextBlocks — Teams flowbot cannot attach .md or HTML. Loads repo-root
+.env.local if the variable is not already in the environment. Never print the webhook URL.
+
+Usage (from repo root):
+  python .cursor/skills/pattern-data-daily-progress/scripts/post_progress_to_teams.py --dry-run
+  python .cursor/skills/pattern-data-daily-progress/scripts/post_progress_to_teams.py --pr-url URL
 """
-
 from __future__ import annotations
 
 import argparse
 import json
 import os
 import re
-import ssl
 import sys
 import urllib.error
 import urllib.request
 from datetime import date
+from html.parser import HTMLParser
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[4]
+MAX_GLANCE = 1200
+MAX_TEAM = 800
+MAX_ACTIONS = 800
+MAX_REPORT = 18000
+TEXTBLOCK_CHUNK = 3500
+MAX_CARD_BYTES = 25000
+HTTP_TIMEOUT = 30
 
 
-def _progress_path_for_today() -> Path:
-    today = date.today().isoformat()
-    return REPO_ROOT / "Daily Progress" / f"pattern-data-delivery-progress-{today}.md"
+class _HTMLStripper(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self._chunks: list[str] = []
+
+    def handle_data(self, data: str) -> None:
+        self._chunks.append(data)
+
+    def get_text(self) -> str:
+        return "".join(self._chunks)
 
 
-def _extract_summary(markdown: str) -> tuple[str, str, str]:
-    as_of = "unknown"
-    m = re.search(r"\*\*As of:\*\*\s*(\d{4}-\d{2}-\d{2})", markdown)
-    if m:
-        as_of = m.group(1)
+def strip_html(text: str) -> str:
+    parser = _HTMLStripper()
+    parser.feed(text)
+    parser.close()
+    return parser.get_text()
 
-    uat = "n/a"
-    m = re.search(r"\*\*(\d+/\d+)\*\*\s+features UAT-ready", markdown)
-    if m:
-        uat = m.group(1)
 
-    austin = "carried forward"
-    m = re.search(
-        r"## Deployment plan \(Austin\).*?\n\| 1\s+\|\s+(.+?)\s+\|",
-        markdown,
-        re.DOTALL,
+def strip_md(text: str) -> str:
+    text = strip_html(text)
+    text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
+    text = text.replace("**", "").replace("*", "")
+    text = re.sub(r"`+", "", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
+def html_lists_to_text(text: str) -> str:
+    text = re.sub(r"<li[^>]*>", "- ", text, flags=re.I)
+    text = re.sub(r"</li>", "\n", text, flags=re.I)
+    text = re.sub(r"</?ul[^>]*>", "\n", text, flags=re.I)
+    text = re.sub(r"</?ol[^>]*>", "\n", text, flags=re.I)
+    return strip_html(text)
+
+
+def markdown_to_card_text(markdown: str) -> str:
+    """Flatten .md (including HTML lists/tables) into Adaptive Card TextBlock text.
+
+    Teams flowbot cannot attach a file or render HTML inside the card.
+    """
+    lines: list[str] = []
+    for raw in markdown.splitlines():
+        stripped = raw.strip()
+        if stripped == "---":
+            continue
+        if re.match(r"^\|?\s*[:\-| ]+\s*$", stripped):
+            continue
+        if stripped.startswith("|"):
+            cells = [strip_md(c) for c in stripped.strip("|").split("|")]
+            lines.append(" · ".join(c for c in cells if c))
+            continue
+        line = html_lists_to_text(raw)
+        line = re.sub(r"^#{1,6}\s+", "", line)
+        line = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r"\1", line)
+        line = line.replace("**", "")
+        lines.append(line)
+    text = "\n".join(lines)
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
+
+
+def chunk_text(text: str, size: int) -> list[str]:
+    if not text:
+        return []
+    chunks: list[str] = []
+    remaining = text
+    while remaining:
+        if len(remaining) <= size:
+            chunks.append(remaining)
+            break
+        split_at = remaining.rfind("\n", 0, size)
+        if split_at < size // 2:
+            split_at = size
+        chunks.append(remaining[:split_at].rstrip())
+        remaining = remaining[split_at:].lstrip("\n")
+    return chunks
+
+
+def load_env_local(repo: Path) -> None:
+    """Load KEY=VALUE lines from .env.local without overriding existing env vars."""
+    path = repo / ".env.local"
+    if not path.is_file():
+        return
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
+def find_repo_root() -> Path:
+    here = Path.cwd().resolve()
+    for candidate in [here, *here.parents]:
+        if (candidate / "Daily Progress").is_dir() and (candidate / "AGENTS.md").is_file():
+            return candidate
+    return Path(__file__).resolve().parents[4]
+
+
+def section_body(markdown: str, heading: str) -> str:
+    pattern = re.compile(
+        rf"^##[^\n]*{re.escape(heading)}[^\n]*\n(.*?)(?=^## |\Z)",
+        re.MULTILINE | re.DOTALL | re.IGNORECASE,
     )
-    if m:
-        austin = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", m.group(1)).strip()
-
-    return as_of, uat, austin
+    match = pattern.search(markdown)
+    return match.group(1).strip() if match else ""
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Post Pattern Data daily progress to Teams (webhook from env)."
+def parse_md_table(block: str) -> list[dict[str, str]]:
+    rows: list[dict[str, str]] = []
+    lines = [ln.strip() for ln in block.splitlines() if ln.strip().startswith("|")]
+    if len(lines) < 2:
+        return rows
+    headers = [strip_md(c) for c in lines[0].strip("|").split("|")]
+    for line in lines[1:]:
+        if re.match(r"^\|?\s*:?-{3,}", line):
+            continue
+        cells = [strip_md(c) for c in line.strip("|").split("|")]
+        if len(cells) < 2:
+            continue
+        row = {headers[i]: cells[i] if i < len(cells) else "" for i in range(len(headers))}
+        rows.append(row)
+    return rows
+
+
+def truncate(text: str, limit: int) -> str:
+    text = text.strip()
+    if len(text) <= limit:
+        return text
+    return text[: max(0, limit - 1)].rstrip() + "…"
+
+
+def as_of_date(markdown: str, fallback: str) -> str:
+    match = re.search(r"\*\*As of:\*\*\s*(\d{4}-\d{2}-\d{2})", markdown)
+    return match.group(1) if match else fallback
+
+
+def uat_ready(markdown: str) -> str:
+    match = re.search(r"UAT-ready progress:\*\*\s*\*\*([0-9]+/[0-9]+)", markdown)
+    if match:
+        return match.group(1)
+    match = re.search(r"\*\*(\d+/\d+)\*\* features UAT-ready", markdown)
+    return match.group(1) if match else "—"
+
+
+def format_glance(rows: list[dict[str, str]]) -> str:
+    lines: list[str] = []
+    for row in rows:
+        phase = row.get("Phase") or next(iter(row.values()), "")
+        status = row.get("Status", "")
+        notes = row.get("Notes") or row.get("What's left") or ""
+        bit = f"{phase} — {status}" if status else phase
+        if notes:
+            bit += f": {notes}"
+        lines.append(bit)
+    return "\n".join(lines)
+
+
+def format_named_table(rows: list[dict[str, str]], name_keys: tuple[str, ...], value_key: str) -> str:
+    lines: list[str] = []
+    for row in rows:
+        name = ""
+        for key in name_keys:
+            if row.get(key):
+                name = row[key]
+                break
+        if not name:
+            name = next(iter(row.values()), "")
+        value = row.get(value_key, "")
+        lines.append(f"{name}: {value}" if value else name)
+    return "\n".join(lines)
+
+
+def build_adaptive_card(payload: dict[str, str]) -> dict:
+    facts = [
+        {"title": "As of", "value": payload["asOf"]},
+        {"title": "UAT-ready", "value": payload["uatReady"]},
+    ]
+    body: list[dict] = [
+        {
+            "type": "TextBlock",
+            "size": "Large",
+            "weight": "Bolder",
+            "text": payload["title"],
+            "wrap": True,
+        },
+        {"type": "FactSet", "facts": facts},
+        {
+            "type": "TextBlock",
+            "weight": "Bolder",
+            "text": "Status at a glance",
+            "spacing": "Medium",
+        },
+        {"type": "TextBlock", "text": payload["glance"] or "—", "wrap": True},
+        {
+            "type": "TextBlock",
+            "weight": "Bolder",
+            "text": "Team focus",
+            "spacing": "Medium",
+        },
+        {"type": "TextBlock", "text": payload["teamFocus"] or "—", "wrap": True},
+        {
+            "type": "TextBlock",
+            "weight": "Bolder",
+            "text": "Open actions",
+            "spacing": "Medium",
+        },
+        {"type": "TextBlock", "text": payload["actions"] or "—", "wrap": True},
+        {
+            "type": "TextBlock",
+            "size": "Small",
+            "text": payload["filePath"],
+            "wrap": True,
+            "spacing": "Medium",
+        },
+        {
+            "type": "TextBlock",
+            "weight": "Bolder",
+            "text": "Full report",
+            "spacing": "Large",
+        },
+    ]
+    for chunk in chunk_text(payload.get("reportText", ""), TEXTBLOCK_CHUNK):
+        body.append({"type": "TextBlock", "text": chunk or "—", "wrap": True, "spacing": "Small"})
+    card: dict = {
+        "type": "AdaptiveCard",
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+        "version": "1.2",
+        "body": body,
+    }
+    if payload.get("prUrl"):
+        card["actions"] = [
+            {"type": "Action.OpenUrl", "title": "Open PR (full report)", "url": payload["prUrl"]}
+        ]
+    return card
+
+
+def shrink_payload(fields: dict[str, str]) -> dict[str, str]:
+    fields = dict(fields)
+    for glance_limit, team_limit, actions_limit in (
+        (MAX_GLANCE, MAX_TEAM, MAX_ACTIONS),
+        (800, 500, 500),
+        (400, 300, 300),
+        (200, 150, 150),
+    ):
+        fields["glance"] = truncate(fields.get("glance", ""), glance_limit)
+        fields["teamFocus"] = truncate(fields.get("teamFocus", ""), team_limit)
+        fields["actions"] = truncate(fields.get("actions", ""), actions_limit)
+        fields["reportText"] = truncate(fields.get("reportText", ""), MAX_REPORT if glance_limit == MAX_GLANCE else max(800, glance_limit * 8))
+        encoded = json.dumps(build_body(fields), ensure_ascii=False).encode("utf-8")
+        if len(encoded) <= MAX_CARD_BYTES:
+            return fields
+    return fields
+
+
+def build_body(fields: dict[str, str]) -> dict:
+    """HTTP body must itself be an Adaptive Card.
+
+    Power Automate Post adaptive card (flowbot) calls AdaptiveCard.FromJson on
+    whatever is in the Adaptive Card field. If the root type is "message" (Teams
+    webhook wrapper) it fails: Property 'type' must be 'AdaptiveCard'.
+    """
+    return build_adaptive_card(fields)
+
+
+def resolve_report(repo: Path, report_date: str, explicit: Path | None) -> Path:
+    if explicit:
+        path = explicit if explicit.is_absolute() else repo / explicit
+        return path
+    return repo / "Daily Progress" / f"pattern-data-delivery-progress-{report_date}.md"
+
+
+def build_fields(markdown: str, report_path: Path, report_date: str, pr_url: str) -> dict[str, str]:
+    glance_rows = parse_md_table(section_body(markdown, "Status at a glance"))
+    team_rows = parse_md_table(section_body(markdown, "Team focus"))
+    action_rows = parse_md_table(section_body(markdown, "Standup action items"))
+    fields = {
+        "title": "Pattern Data — delivery progress",
+        "asOf": as_of_date(markdown, report_date),
+        "uatReady": uat_ready(markdown),
+        "glance": format_glance(glance_rows),
+        "teamFocus": format_named_table(team_rows, ("Member",), "Focus"),
+        "actions": format_named_table(action_rows, ("Owner",), "Action"),
+        "prUrl": pr_url,
+        "filePath": report_path.as_posix() if report_path.is_absolute() else str(report_path),
+        "reportText": markdown_to_card_text(markdown),
+    }
+    try:
+        fields["filePath"] = report_path.resolve().relative_to(find_repo_root()).as_posix()
+    except ValueError:
+        fields["filePath"] = report_path.name
+    return shrink_payload(fields)
+
+
+def post_json(url: str, body: dict) -> int:
+    data = json.dumps(body, ensure_ascii=False).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=data,
+        method="POST",
+        headers={"Content-Type": "application/json; charset=utf-8"},
     )
-    parser.add_argument("--pr-url", required=True, help="Pull request URL to include in the post")
+    try:
+        with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as resp:
+            return int(resp.status)
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")[:500]
+        raise SystemExit(f"Teams webhook HTTP {exc.code}: {detail}") from exc
+    except urllib.error.URLError as exc:
+        raise SystemExit(f"Teams webhook request failed: {exc.reason}") from exc
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="POST Pattern Data progress summary to Teams via Power Automate.")
+    parser.add_argument("--date", help="Report date YYYY-MM-DD (default: today)")
+    parser.add_argument("--file", type=Path, help="Explicit progress markdown path")
+    parser.add_argument("--pr-url", default="", help="Pull request URL for the Open PR button")
+    parser.add_argument("--webhook-url", default="", help="Override TEAMS_WEBHOOK_URL (do not log this)")
+    parser.add_argument("--dry-run", action="store_true", help="Print JSON payload; do not POST")
     args = parser.parse_args()
 
-    webhook = os.environ.get("TEAMS_WEBHOOK_URL", "").strip()
+    repo = find_repo_root()
+    load_env_local(repo)
+    report_date = args.date or date.today().isoformat()
+    report_path = resolve_report(repo, report_date, args.file)
+    if not report_path.is_file():
+        print(f"Progress report not found: {report_path}", file=sys.stderr)
+        sys.exit(2)
+
+    markdown = report_path.read_text(encoding="utf-8")
+    fields = build_fields(markdown, report_path, report_date, args.pr_url)
+    body = build_body(fields)
+
+    if args.dry_run:
+        try:
+            sys.stdout.reconfigure(encoding="utf-8")
+        except (AttributeError, OSError):
+            pass
+        json.dump(body, sys.stdout, ensure_ascii=False, indent=2)
+        sys.stdout.write("\n")
+        return
+
+    webhook = args.webhook_url or os.environ.get("TEAMS_WEBHOOK_URL", "").strip()
     if not webhook:
-        print("TEAMS_WEBHOOK_URL is not set; skipping Teams post.", file=sys.stderr)
-        return 1
+        print(
+            "TEAMS_WEBHOOK_URL is not set. Add it to .env.local (gitignored) or a Cloud Agent secret; do not commit it.",
+            file=sys.stderr,
+        )
+        sys.exit(2)
 
-    progress_path = _progress_path_for_today()
-    if not progress_path.is_file():
-        print(f"Progress file not found: {progress_path}", file=sys.stderr)
-        return 1
-
-    markdown = progress_path.read_text(encoding="utf-8")
-    as_of, uat, austin = _extract_summary(markdown)
-    rel = progress_path.relative_to(REPO_ROOT)
-
-    text = (
-        f"**Pattern Data daily progress** ({as_of}) — Jira-only weekday sync\n\n"
-        f"- File: `{rel}`\n"
-        f"- UAT-ready: **{uat}**\n"
-        f"- Austin priority 1: {austin}\n"
-        f"- PR: {args.pr_url}\n\n"
-        "Amr: please post the full progress markdown to Teams after standup "
-        "(source file attached)."
-    )
-
-    payload = json.dumps({"text": text}).encode("utf-8")
-    request = urllib.request.Request(
-        webhook,
-        data=payload,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-
-    try:
-        with urllib.request.urlopen(request, timeout=30, context=ssl.create_default_context()) as resp:
-            status = resp.status
-            body = resp.read(256)
-    except urllib.error.HTTPError as exc:
-        print(f"Teams post failed: HTTP {exc.code}", file=sys.stderr)
-        return 1
-    except urllib.error.URLError:
-        print("Teams post failed: network error", file=sys.stderr)
-        return 1
-
-    if status >= 300:
-        print(f"Teams post failed: HTTP {status}", file=sys.stderr)
-        return 1
-
-    print("Teams post succeeded.")
-    if body:
-        # Incoming webhooks typically return "1"; do not echo request URL.
-        print(f"Teams response: {body.decode('utf-8', errors='replace')[:80]}")
-    return 0
+    status = post_json(webhook, body)
+    print(f"Posted progress card for {fields['asOf']} (HTTP {status})")
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

@@ -54,6 +54,8 @@ For each story in the feature tracker, call `getJiraIssue`:
 
 Parse **comments** (newest first) for PR links, changeset URLs, and wordings status.
 
+When a **PD Review with Austin** transcript is incomplete (timestamp jump) or thin on decisions, also scan story comments for headings **`Austin requirement sync — YYYY-MM-DD`** whose `Call / source` is **PD Review**. Use those bullets to fill **Deployment plan (Austin)** and tracker Next step — do not invent the missing transcript middle.
+
 ## Assignee mapping
 
 | Jira displayName | Report row |

@@ -4,6 +4,7 @@
 
 - Progress: `Daily Progress/pattern-data-delivery-progress-YYYY-MM-DD.md`
 - Standup transcript: `Transcript/ChartSwap Daily Stand up/ChartSwap-Daily-Stand-up-YYYY-MM-DD.docx`
+- PD Review with Austin: `Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD` (plain text, `.txt`, or `.docx`)
 - Austin meeting transcript: `Transcript/Austin Meeting/Pattern-Data-Austin-YYYY-MM-DD.docx`
 - Actions: `Daily Actions/daily-actions-YYYY-MM-DD.md` (optional — not used as source for the progress report)
 
@@ -37,8 +38,8 @@ Include the **How to read this report** block in every progress file (after the 
 
 | Section | Update when |
 |---------|-------------|
-| **Deployment plan (Austin)** | **Austin meeting transcript** — priority order, scope in/out, next environment target; replace table when Austin changes plan |
-| **Status at a glance** — all phase rows | Standup **or** Austin meeting: closed subtasks, CS uploads, deploy decisions, **Forecast slips**. Do **not** accumulate historical bullets across days. |
+| **Deployment plan (Austin)** | **Austin-class transcript** (PD Review with Austin or Austin meeting) — priority order, scope in/out, next-up after wrap-up; replace table when Austin changes plan |
+| **Status at a glance** — all phase rows | Standup **or** Austin-class: closed subtasks, CS uploads, deploy decisions, **Forecast slips**. Do **not** accumulate historical bullets across days. |
 | **Feature delivery tracker** | Re-sync from Jira before editing; append `**Update YYYY-MM-DD:**` in Next step when standup or Austin adds detail |
 | **Team focus** | Michael/Sarah from Jira assignees; **Islam** from standup (default: RequestShare / LNI-3763); **exclude Youssef Yahia** subtasks |
 | **Path to UAT & Production** | Recompute `N/M features UAT-ready` from tracker; adjust target dates only when **Austin** or standup confirms a slip |
@@ -77,7 +78,7 @@ Use HTML lists inside table cells. **Keep each cell concise — plan-affecting u
 - **What's done** — `<li>` bullets: **today's** closed subtasks, CS uploads validated, stories marked ready
 - **What's left** — `<ul><li>` bullets: open stories, pending CS, wordings approval, UAT promotion queue
 - **Notes** — only constraints that **change scope, dates, or capacity** (e.g. feature-by-feature deploy, Austin decision)
-- **Forecast** — bold date; only change when **Austin meeting** or standup calls a slip
+- **Forecast** — bold date; only change when **Austin-class transcript** or standup calls a slip
 
 ---
 
@@ -88,19 +89,21 @@ Engineering manager **Austin** sets which features deploy next and may change th
 ```markdown
 ## Deployment plan (Austin)
 
-*Engineering manager **Austin** sets deployment order and scope — this may change after each Austin meeting. Update this block from the latest Austin meeting transcript when provided.*
+*Engineering manager **Austin** sets deployment order and scope — this may change after each Austin meeting or PD Review. Update this block from the latest Austin-class transcript when provided.*
 
 | Priority | Feature / story | Environment | Status |
 | --- | --- | --- | --- |
 | 1 | [LNI-3137](...) Payment Management | UAT sandbox | Upload in progress |
-| 2 | [LNI-3223](...) AutoPay | pddev | Next per Austin — TBD |
+| 2 | Approved Fee overhaul | pddev | Next after current wrap-up (Austin) |
 
-*Last plan input:* [Pattern-Data-Austin — YYYY-MM-DD](../Transcript/Austin%20Meeting/Pattern-Data-Austin-YYYY-MM-DD.docx)*
+*Last plan input:* [PD Review with Austin — YYYY-MM-DD](../Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD)*
 ```
 
 - **Priority 1** = next feature Austin directed for promotion or active UAT work
 - Remaining rows = queue or "TBD until Austin meeting"
-- If no Austin transcript: carry forward prior day's plan or infer from Jira UAT column + standup; note `*Last plan input:* baseline from Jira sync YYYY-MM-DD — no Austin meeting transcript on file yet.*`
+- If no Austin-class transcript: carry forward prior day's plan or infer from Jira UAT column + standup; note `*Last plan input:* baseline from Jira sync YYYY-MM-DD — no Austin meeting or PD Review transcript on file yet.*`
+- Prefer **PD Review with Austin** over `Pattern-Data-Austin` when both exist for the same date
+- If the PD Review file jumps timestamps, note the gap and cite Jira **Austin requirement sync** comments from that date as the backfill source
 - When Austin reprioritizes, **replace the table** — do not append stale priorities
 
 ---
@@ -235,7 +238,8 @@ Mitigation owners: **Hamed / Nabawy** escalate to **Austin** where noted. Do **n
 
 | Transcript topic | Where it goes |
 |------------------|---------------|
-| Deployment order / next feature / scope cut | **Deployment plan (Austin)** + Status at a glance Forecast |
+| Deployment order / next feature / scope cut / next-up after wrap-up | **Deployment plan (Austin)** + Status at a glance Forecast |
+| Approved Fee overhaul / PCI cart / account flag | **Deployment plan (Austin)** + tracker Next step + action items |
 | Date slip or new target | Status at a glance Forecast + Path to UAT targets |
 | Story/subtask progress | Feature delivery tracker Next step + Status at a glance |
 | PR / changeset / deploy | Feature delivery tracker columns + Path to UAT |
@@ -249,14 +253,14 @@ Mitigation owners: **Hamed / Nabawy** escalate to **Austin** where noted. Do **n
 
 ## Standup action items (last section)
 
-Always the **final section** in the progress file. Extract from **today's standup transcript only** — not from `Daily Actions/` files or prior progress reports. Replace entirely on each sync.
+Always the **final section** in the progress file. Extract from **today's standup and/or Austin-class transcript** — not from `Daily Actions/` files or prior progress reports. Replace entirely on each sync.
 
 ```markdown
 ---
 
 ## Standup action items (YYYY-MM-DD)
 
-*From [ChartSwap Daily Stand-up — YYYY-MM-DD](../Transcript/ChartSwap%20Daily%20Stand%20up/ChartSwap-Daily-Stand-up-YYYY-MM-DD.docx).*
+*From [PD Review with Austin — YYYY-MM-DD](../Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD) and/or [ChartSwap Daily Stand-up — YYYY-MM-DD](../Transcript/ChartSwap%20Daily%20Stand%20up/ChartSwap-Daily-Stand-up-YYYY-MM-DD.docx).*
 
 | Owner | Action |
 | --- | --- |
