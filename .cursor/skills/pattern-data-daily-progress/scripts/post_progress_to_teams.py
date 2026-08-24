@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 """POST today's Pattern Data progress report as a Teams Adaptive Card.
 
-Reads Daily Progress/pattern-data-delivery-progress-YYYY-MM-DD.md and POSTs the
-card JSON (root type AdaptiveCard) to TEAMS_WEBHOOK_URL. Inlines the full report
-as TextBlocks — Teams flowbot cannot attach .md or HTML. Loads repo-root
-.env.local if the variable is not already in the environment. Never print the webhook URL.
+Reads Daily Progress/pattern-data-delivery-progress-YYYY-MM-DD.md and POSTs a
+Teams webhook envelope (type=message + attachments) whose content is an
+Adaptive Card. Inlines the full report as TextBlocks — Teams cannot attach .md
+or HTML. Loads repo-root .env.local if TEAMS_WEBHOOK_URL is not already in the
+environment. Never print the webhook URL.
+
+On HTTP 400, retries Adaptive Card as the JSON root (custom HTTP trigger +
+Post adaptive card flows that call AdaptiveCard.FromJson on triggerBody()).
 
 Usage (from repo root):
   python .cursor/skills/pattern-data-daily-progress/scripts/post_progress_to_teams.py --dry-run
@@ -26,9 +30,9 @@ from pathlib import Path
 MAX_GLANCE = 1200
 MAX_TEAM = 800
 MAX_ACTIONS = 800
-MAX_REPORT = 18000
-TEXTBLOCK_CHUNK = 3500
-MAX_CARD_BYTES = 25000
+MAX_REPORT = 12000
+TEXTBLOCK_CHUNK = 1800
+MAX_CARD_BYTES = 22000
 HTTP_TIMEOUT = 30
 
 
@@ -290,14 +294,68 @@ def shrink_payload(fields: dict[str, str]) -> dict[str, str]:
     return fields
 
 
-def build_body(fields: dict[str, str]) -> dict:
-    """HTTP body must itself be an Adaptive Card.
-
-    Power Automate Post adaptive card (flowbot) calls AdaptiveCard.FromJson on
-    whatever is in the Adaptive Card field. If the root type is "message" (Teams
-    webhook wrapper) it fails: Property 'type' must be 'AdaptiveCard'.
-    """
+def build_adaptive_card_root(fields: dict[str, str]) -> dict:
+    """Adaptive Card object (used inside the Teams envelope, and as a 400 fallback)."""
     return build_adaptive_card(fields)
+
+
+def wrap_teams_message(card: dict) -> dict:
+    """Official Teams / Power Automate webhook envelope.
+
+    Workflows that use "When a Teams webhook request is received" (or Send each
+    adaptive card over triggerBody().attachments) return HTTP 400 if the root
+    JSON is a raw AdaptiveCard instead of type=message.
+    """
+    return {
+        "type": "message",
+        "attachments": [
+            {
+                "contentType": "application/vnd.microsoft.card.adaptive",
+                "contentUrl": None,
+                "content": card,
+            }
+        ],
+    }
+
+
+def build_body(fields: dict[str, str]) -> dict:
+    return wrap_teams_message(build_adaptive_card_root(fields))
+
+
+def sanitize_error(text: str) -> str:
+    """Strip URLs and signatures so 400 bodies never echo the webhook."""
+    text = re.sub(r"https://[^\s\"']+", "[url]", text)
+    text = re.sub(r"(?i)sig=[^&\s\"']+", "sig=[redacted]", text)
+    return text[:500]
+
+
+def post_json(url: str, body: dict) -> int:
+    data = json.dumps(body, ensure_ascii=False).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=data,
+        method="POST",
+        headers={"Content-Type": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as resp:
+            return int(resp.status)
+    except urllib.error.HTTPError as exc:
+        detail = sanitize_error(exc.read().decode("utf-8", errors="replace"))
+        raise RuntimeError(f"HTTP {exc.code}: {detail}") from None
+    except urllib.error.URLError:
+        raise RuntimeError("network error") from None
+
+
+def post_card(url: str, fields: dict[str, str]) -> int:
+    card = build_adaptive_card_root(fields)
+    try:
+        return post_json(url, wrap_teams_message(card))
+    except RuntimeError as first:
+        if not str(first).startswith("HTTP 400"):
+            raise
+        # Custom HTTP + Post-adaptive-card flows want AdaptiveCard as the root.
+        return post_json(url, card)
 
 
 def resolve_report(repo: Path, report_date: str, explicit: Path | None) -> Path:
@@ -327,24 +385,6 @@ def build_fields(markdown: str, report_path: Path, report_date: str, pr_url: str
     except ValueError:
         fields["filePath"] = report_path.name
     return shrink_payload(fields)
-
-
-def post_json(url: str, body: dict) -> int:
-    data = json.dumps(body, ensure_ascii=False).encode("utf-8")
-    req = urllib.request.Request(
-        url,
-        data=data,
-        method="POST",
-        headers={"Content-Type": "application/json; charset=utf-8"},
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as resp:
-            return int(resp.status)
-    except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")[:500]
-        raise SystemExit(f"Teams webhook HTTP {exc.code}: {detail}") from exc
-    except urllib.error.URLError as exc:
-        raise SystemExit(f"Teams webhook request failed: {exc.reason}") from exc
 
 
 def main() -> None:
@@ -385,7 +425,10 @@ def main() -> None:
         )
         sys.exit(2)
 
-    status = post_json(webhook, body)
+    try:
+        status = post_card(webhook, fields)
+    except RuntimeError as exc:
+        raise SystemExit(f"Teams webhook failed: {exc}") from exc
     print(f"Posted progress card for {fields['asOf']} (HTTP {status})")
 
 

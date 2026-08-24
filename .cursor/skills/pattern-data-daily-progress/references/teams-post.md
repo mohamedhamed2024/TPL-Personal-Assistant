@@ -12,17 +12,14 @@ The morning Cursor Automation writes today's progress markdown, opens a PR, then
 1. Open [Power Automate](https://make.powerautomate.com) (or Teams **Workflows**).
 2. **Create** → **Instant cloud flow**.
 3. Trigger: **When an HTTP request is received**.
-4. Paste this JSON schema into **Request Body JSON Schema** (root **must** be an Adaptive Card):
+4. Paste this JSON schema into **Request Body JSON Schema** (Teams webhook envelope):
 
 ```json
 {
   "type": "object",
   "properties": {
     "type": { "type": "string" },
-    "$schema": { "type": "string" },
-    "version": { "type": "string" },
-    "body": { "type": "array" },
-    "actions": { "type": "array" }
+    "attachments": { "type": "array" }
   }
 }
 ```
@@ -31,8 +28,8 @@ The morning Cursor Automation writes today's progress markdown, opens a PR, then
    - **Post as:** Flow bot
    - **Post in:** Channel
    - **Team / Channel:** the Pattern Data progress channel Amr uses
-   - **Adaptive Card:** `string(triggerBody())`  
-     The HTTP body **is** the card (`"type": "AdaptiveCard"`). Do **not** use `triggerBody()?['adaptiveCard']` and do **not** pass a Teams `"type": "message"` wrapper.
+   - **Adaptive Card:** `triggerBody()?['attachments']?[0]?['content']`  
+     Prefer the **When a Teams webhook request is received** template, which already loops `attachments`. Do **not** pass a raw Adaptive Card as the HTTP body (that is a common **400**).
 6. Save the flow. Copy the **HTTP POST URL**.
 7. In [Cursor Cloud Agents](https://cursor.com/dashboard/cloud-agents) → this repo's environment → **Secrets**, add:
 
@@ -40,31 +37,47 @@ The morning Cursor Automation writes today's progress markdown, opens a PR, then
    |------|--------|
    | `TEAMS_WEBHOOK_URL` | the HTTP POST URL from step 6 |
 
-## Existing flow — fix *Property 'type' must be 'AdaptiveCard'*
+## Existing flow — fix HTTP 400 / *Property 'type' must be 'AdaptiveCard'*
 
-The flowbot received JSON whose root `type` was `message` (or a nested field), not `AdaptiveCard`.
+**400 from the webhook URL:** the HTTP body was a raw Adaptive Card. The script now sends `type: message` + `attachments`. Re-run `post_progress_to_teams.py`.
 
-1. Open the **Post adaptive card** action.
-2. Set **Adaptive Card** to **`string(triggerBody())`**.
+**Property 'type' must be 'AdaptiveCard'** in **Post adaptive card**: the action received the envelope (`type: message`) instead of the card. Set **Adaptive Card** to `triggerBody()?['attachments']?[0]?['content']` (or use the Teams webhook template).
+
+1. Open the flow that owns `TEAMS_WEBHOOK_URL`.
+2. Confirm the trigger accepts the message envelope (schema above, or the Teams webhook trigger).
 3. Save.
-4. Re-run `post_progress_to_teams.py` (the script now POSTs the card as the entire body).
+4. Re-run `post_progress_to_teams.py`.
 
 ## What the script sends
 
-The POST body **is** the Adaptive Card:
+The POST body is a **Teams webhook message** (not a raw Adaptive Card). Workflows that
+expect `triggerBody().attachments` return **HTTP 400** if the root `type` is `AdaptiveCard`.
 
 ```json
 {
-  "type": "AdaptiveCard",
-  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-  "version": "1.2",
-  "body": [ ]
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "contentUrl": null,
+      "content": {
+        "type": "AdaptiveCard",
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+        "version": "1.2",
+        "body": []
+      }
+    }
+  ]
 }
 ```
 
-Teams Adaptive Cards cannot attach a `.md` or HTML file. The script **inlines** the full progress report as TextBlocks under **Full report** (HTML lists/tables flattened to text). If the card would exceed ~25 KB, the report text is truncated.
+If that envelope still returns HTTP 400, the script retries with the Adaptive Card as the
+JSON root (for custom **When an HTTP request is received** → **Post adaptive card** flows
+that use `string(triggerBody())`).
 
-Keep **Adaptive Card** = `string(triggerBody())`.
+Teams Adaptive Cards cannot attach a `.md` or HTML file. The script **inlines** the full progress report as TextBlocks under **Full report** (HTML lists/tables flattened to text). If the card would exceed ~22 KB, the report text is truncated.
+
+For the built-in **When a Teams webhook request is received** template, keep **Send each adaptive card** bound to `triggerBody()['attachments']`. Do **not** pass `string(triggerBody())` into Post adaptive card when the body is this envelope (root `type` is `message`).
 
 ## Test locally (no post)
 
