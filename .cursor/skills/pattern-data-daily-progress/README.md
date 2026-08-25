@@ -9,7 +9,7 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 - **Austin meeting / PD Review sync** — Update deployment plan, dates, and scope from Austin-class transcript
 - **Bootstrap new day** — Copy prior day's report and update header/sync dates
 - **Testing alignment** — Optionally sync `Testing Updates.md` after progress update
-- **Weekday morning job** — Jira-only report + PR + Teams Adaptive Card (see below)
+- **Weekday morning job** — Jira-only report, commit to **main**, post `.md` to Teams via Lokka
 
 ## How to Use
 
@@ -32,8 +32,8 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 9. Extract action items and append **Standup action items** table as the last section
 10. Optionally sync `Testing Updates.md`
 11. Delete temp files
-12. `git fetch origin` before opening a PR; rebase onto the default branch if needed
-13. Post a Teams Adaptive Card (summary + full report text) via `scripts/post_progress_to_teams.py` when `TEAMS_WEBHOOK_URL` is set
+12. `git fetch` + `pull --ff-only`, commit and **push to main** (no PR)
+13. Post the progress `.md` to Teams via **Lokka** (Graph) per `references/teams-post.md`
 
 ## Features
 
@@ -64,6 +64,7 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 ### MCP Tools Used
 - `searchJiraIssuesUsingJql` — fetch DVI-1086 hierarchy
 - `getJiraIssue` — story comments for PR/changeset parsing
+- `Lokka-Microsoft-365` / `Lokka-Microsoft` — Microsoft Graph: upload the progress `.md` and post it to the Teams channel
 
 ## Configuration Sources
 
@@ -78,15 +79,15 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 
 ## Weekday morning automation → Teams
 
-A Cursor Automation can run this skill on a weekday morning from **Jira only** (skip missing transcripts), open a PR, and POST a summary Adaptive Card to Power Automate → a Teams channel.
+A Cursor Automation can run this skill on a weekday morning from **Jira only** (skip missing transcripts), **commit to main**, and post the progress `.md` to a Teams channel with **Lokka**.
 
 | Piece | Where |
 |-------|--------|
-| Power Automate + secret | [references/teams-post.md](references/teams-post.md) |
+| Lokka + Graph + channel IDs | [references/teams-post.md](references/teams-post.md) |
 | Automation prompt | [references/automation-prompt.md](references/automation-prompt.md) |
-| Post script | [scripts/post_progress_to_teams.py](scripts/post_progress_to_teams.py) |
+| Lokka MCP | [`.cursor/mcp.json`](../../mcp.json) (`Lokka-Microsoft-365` — default Lokka app; sign in via connections UI) |
 
-Create the live job in the **Agents Window** (`/automate`) or at [cursor.com/automations](https://cursor.com/automations). Store `TEAMS_WEBHOOK_URL` as a Cloud Agent secret — never commit it.
+Create the live job in the **Agents Window** (`/automate`) or at [cursor.com/automations](https://cursor.com/automations). Store `MICROSOFT_TENANT_ID`, `MICROSOFT_CLIENT_ID`, and `TEAMS_CHANNEL_ID` as Cloud Agent secrets — never commit them.
 
 ## Skill Info
 

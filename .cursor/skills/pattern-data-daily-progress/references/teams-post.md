@@ -1,106 +1,103 @@
-# Teams post — Power Automate webhook
+# Teams post — Lokka (Microsoft Graph)
 
-The morning Cursor Automation writes today's progress markdown, opens a PR, then POSTs a summary card to **Power Automate**. The flow is bound to the Teams channel — the agent never needs the channel name.
+After today's progress markdown is on **main**, post **the `.md` file** to the Teams channel using the **Lokka** MCP server **`Lokka-Microsoft-365`**. Do not use Power Automate / `TEAMS_WEBHOOK_URL` unless Lokka is disconnected.
 
-**Do not commit the HTTP URL.** Store it as:
+Lokka is a Graph proxy: tool **`Lokka-Microsoft`** (`apiType: graph`, `path`, `method`, `body`).
 
-- Cloud Agent environment secret `TEAMS_WEBHOOK_URL` (for the weekday automation)
-- Repo-root `.env.local` for local manual runs (`TEAMS_WEBHOOK_URL=...`). That file is gitignored.
+## One-time setup
 
-## One-time: create the flow
-
-1. Open [Power Automate](https://make.powerautomate.com) (or Teams **Workflows**).
-2. **Create** → **Instant cloud flow**.
-3. Trigger: **When an HTTP request is received**.
-4. Paste this JSON schema into **Request Body JSON Schema** (Teams webhook envelope):
+Project MCP is [`.cursor/mcp.json`](../../../mcp.json). Use the **default Lokka app** (no tenant/client IDs in `mcp.json`):
 
 ```json
 {
-  "type": "object",
-  "properties": {
-    "type": { "type": "string" },
-    "attachments": { "type": "array" }
+  "mcpServers": {
+    "Lokka-Microsoft-365": {
+      "command": "npx",
+      "args": ["-y", "@merill/lokka"]
+    }
   }
 }
 ```
 
-5. Add action **Post adaptive card in a chat or channel** (Teams):
-   - **Post as:** Flow bot
-   - **Post in:** Channel
-   - **Team / Channel:** the Pattern Data progress channel Amr uses
-   - **Adaptive Card:** `triggerBody()?['attachments']?[0]?['content']`  
-     Prefer the **When a Teams webhook request is received** template, which already loops `attachments`. Do **not** pass a raw Adaptive Card as the HTTP body (that is a common **400**).
-6. Save the flow. Copy the **HTTP POST URL**.
-7. In [Cursor Cloud Agents](https://cursor.com/dashboard/cloud-agents) → this repo's environment → **Secrets**, add:
+1. Reload the **Lokka-Microsoft-365** MCP server in Cursor Settings (MCP).
+2. Sign in with **Lokka connections** (say `lokka sign in`, or the agent opens the dialog). Do not expect Graph to work until a tenant connection appears.
+3. Grant delegated Graph scopes: `ChannelMessage.Send`, `Team.ReadBasic.All`, `Channel.ReadBasic.All`, `Files.ReadWrite.All` (or `Sites.ReadWrite.All`).
+4. Set `TEAMS_CHANNEL_ID` in gitignored `.env.local` (skill only — not passed to Lokka). Never commit or print it.
 
-   | Name | Value |
-   |------|--------|
-   | `TEAMS_WEBHOOK_URL` | the HTTP POST URL from step 6 |
+Optional custom Entra app (only if the default Lokka app cannot consent): set `TENANT_ID` / `CLIENT_ID` from `MICROSOFT_TENANT_ID` / `MICROSOFT_CLIENT_ID`, `USE_INTERACTIVE=true`, and `REDIRECT_URI=http://localhost:3000` (must match the app registration — do **not** use `http://localhost` with no port).
 
-## Existing flow — fix HTTP 400 / *Property 'type' must be 'AdaptiveCard'*
+Cloud Automations: `TEAMS_CHANNEL_ID` as an environment secret, plus Lokka signed in for Cloud Agents. Custom-app secrets (`MICROSOFT_TENANT_ID` / `MICROSOFT_CLIENT_ID`) only if you use that path.
 
-**400 from the webhook URL:** the HTTP body was a raw Adaptive Card. The script now sends `type: message` + `attachments`. Re-run `post_progress_to_teams.py`.
+## Each run (after the report exists)
 
-**Property 'type' must be 'AdaptiveCard'** in **Post adaptive card**: the action received the envelope (`type: message`) instead of the card. Set **Adaptive Card** to `triggerBody()?['attachments']?[0]?['content']` (or use the Teams webhook template).
+Read `Daily Progress/pattern-data-delivery-progress-YYYY-MM-DD.md`. Read `TEAMS_CHANNEL_ID` from the environment or `.env.local` **without printing it**.
 
-1. Open the flow that owns `TEAMS_WEBHOOK_URL`.
-2. Confirm the trigger accepts the message envelope (schema above, or the Teams webhook trigger).
-3. Save.
-4. Re-run `post_progress_to_teams.py`.
+### 1. Resolve the team from the channel
 
-## What the script sends
+`TEAMS_CHANNEL_ID` is required. Team id is **not** required.
 
-The POST body is a **Teams webhook message** (not a raw Adaptive Card). Workflows that
-expect `triggerBody().attachments` return **HTTP 400** if the root `type` is `AdaptiveCard`.
+- `GET /me/joinedTeams` (`$select=id,displayName`)
+- For each team, `GET /teams/{team-id}/channels` (`$select=id,displayName`) until `id` matches `TEAMS_CHANNEL_ID`
+- Use that `team-id` for upload + message calls
+
+If the channel is not in joined teams, stop and say Lokka/Graph cannot see that channel (membership or permission).
+
+### 2. Upload the `.md` to the channel Files tab
+
+```
+GET /teams/{team-id}/channels/{channel-id}/filesFolder
+```
+
+Use `parentReference.driveId` and `id` (folder item), then:
+
+```
+PUT /drives/{drive-id}/items/{folder-id}:/pattern-data-delivery-progress-YYYY-MM-DD.md:/content
+```
+
+UTF-8 body = the markdown file. If PUT content fails through Lokka, fall back to:
+
+```
+PUT /groups/{team-id}/drive/root:/General/pattern-data-delivery-progress-YYYY-MM-DD.md:/content
+```
+
+(Use the channel folder name from `filesFolder` when it is not `General`.)
+
+### 3. Post a channel message that points at the file
+
+```
+POST /teams/{team-id}/channels/{channel-id}/messages
+```
+
+Body (HTML — Teams does not render raw `.md` in the message pane):
 
 ```json
 {
-  "type": "message",
+  "body": {
+    "contentType": "html",
+    "content": "<p><b>Pattern Data — delivery progress</b> (YYYY-MM-DD)</p><p>Full report in channel Files: pattern-data-delivery-progress-YYYY-MM-DD.md</p><p>Short HTML of glance / team focus / actions…</p>"
+  }
+}
+```
+
+If the upload returned a `webUrl`, include it as a link. If Graph returns an attachment handle:
+
+```json
+{
   "attachments": [
     {
-      "contentType": "application/vnd.microsoft.card.adaptive",
-      "contentUrl": null,
-      "content": {
-        "type": "AdaptiveCard",
-        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-        "version": "1.2",
-        "body": []
-      }
+      "id": "1",
+      "contentType": "reference",
+      "contentUrl": "<item webUrl>",
+      "name": "pattern-data-delivery-progress-YYYY-MM-DD.md"
     }
   ]
 }
 ```
 
-If that envelope still returns HTTP 400, the script retries with the Adaptive Card as the
-JSON root (for custom **When an HTTP request is received** → **Post adaptive card** flows
-that use `string(triggerBody())`).
+and `<attachment id=\"1\"></attachment>` in the HTML.
 
-Teams Adaptive Cards cannot attach a `.md` or HTML file. The script **inlines** the full progress report as TextBlocks under **Full report** (HTML lists/tables flattened to text). If the card would exceed ~22 KB, the report text is truncated.
+Keep the HTML summary short. The **file** is what Amr asked for.
 
-For the built-in **When a Teams webhook request is received** template, keep **Send each adaptive card** bound to `triggerBody()['attachments']`. Do **not** pass `string(triggerBody())` into Post adaptive card when the body is this envelope (root `type` is `message`).
+## Fallback (Lokka unavailable)
 
-## Test locally (no post)
-
-From the repo root (Windows: `py -3` if `python` is not on PATH):
-
-```bash
-python .cursor/skills/pattern-data-daily-progress/scripts/post_progress_to_teams.py --dry-run
-```
-
-Point at a specific file / date / PR:
-
-```bash
-python .cursor/skills/pattern-data-daily-progress/scripts/post_progress_to_teams.py --dry-run --date 2026-08-23 --pr-url "https://github.com/example/TPL-Personal-Assistant/pull/1"
-```
-
-Post for real (requires `TEAMS_WEBHOOK_URL` in the environment or `.env.local`):
-
-```bash
-python .cursor/skills/pattern-data-daily-progress/scripts/post_progress_to_teams.py --pr-url "<PR url>"
-```
-
-Exit codes: `0` success · `2` missing webhook or missing report file · `1` HTTP / parse error.
-
-## Optional later
-
-A true file in the channel **Files** tab still needs a SharePoint **Create file** action (not the Adaptive Card).
+Remind the user to post the `.md` in Teams manually. Optional last resort: [scripts/post_progress_to_teams.py](../scripts/post_progress_to_teams.py) + `TEAMS_WEBHOOK_URL` (Adaptive Card only — no real file attach).

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "Lokka-Microsoft-365": {
+      "command": "npx",
+      "args": ["-y", "@merill/lokka"]
+    }
+  }
+}

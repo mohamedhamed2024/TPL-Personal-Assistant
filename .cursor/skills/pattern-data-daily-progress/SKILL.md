@@ -60,8 +60,8 @@ Copy this checklist and track progress:
 - [ ] 9. Replace Standup action items table at end of file
 - [ ] 10. Optionally sync Testing Updates.md
 - [ ] 11. Delete temp extract files
-- [ ] 12. git fetch origin before opening a PR (rebase onto default branch if needed; do not push to main)
-- [ ] 13. Post Teams Adaptive Card (full report inlined) via post_progress_to_teams.py
+- [ ] 12. git fetch + pull --ff-only, commit today's progress on **main**, push to origin (no PR)
+- [ ] 13. Post the progress .md to the Teams channel via **Lokka** (Microsoft Graph)
 ```
 
 ### Step 1 — Bootstrap
@@ -135,29 +135,30 @@ Apply standing business rules. See [references/domain-decisions.md](references/d
 
 Align phase summary with today's progress. Set `Last updated` and `Updated by: Standup sync (pattern-data-delivery-progress-YYYY-MM-DD)`.
 
-### Step 9 — Fetch before PR
+### Step 9 — Commit to main
 
-When opening a pull request (automation or when the user asks for a PR):
+After the progress markdown is written (and `Testing Updates.md` if changed):
 
-1. `git fetch origin` (or the remote that tracks the default branch)
-2. Rebase the working branch onto the latest default branch if it has moved
-3. Then open the PR
+1. `git fetch origin`
+2. Check out **main** (or `master` if that is the default) and `git pull --ff-only`
+3. Stage only the progress deliverable(s): `Daily Progress/pattern-data-delivery-progress-YYYY-MM-DD.md` and `Testing Updates.md` if you updated it
+4. Commit with a short message (why: standup/Jira sync for that date)
+5. `git push origin HEAD` to **main**
 
-Do **not** push to the default branch. Do **not** force-push.
+Do **not** open a pull request. Do **not** force-push. Do **not** commit `.env.local`, webhook URLs, or other secrets. Skip the commit if there are no file changes.
 
-### Step 10 — Post-update
+### Step 10 — Post to Teams (Lokka)
 
-Amr requested the progress report in Teams.
+Amr requested the full progress `.md` in Teams. Use the **Lokka** MCP server **`Lokka-Microsoft-365`** (Graph tool `Lokka-Microsoft`) — not Power Automate and not `post_progress_to_teams.py` unless Lokka is unavailable.
 
-**Cursor Automation / when `TEAMS_WEBHOOK_URL` is set:** after the markdown exists (and after the PR URL is known, if opening a PR), run:
+Follow [references/teams-post.md](references/teams-post.md):
 
-```bash
-python .cursor/skills/pattern-data-daily-progress/scripts/post_progress_to_teams.py --pr-url "<PR url if any>"
-```
+1. Confirm Lokka is connected (`lokka-list-connections` / `get-auth-status`). If there is no tenant connection, open **Lokka connections** and sign in. `TEAMS_CHANNEL_ID` is the destination; it is not Lokka auth.
+2. Read `TEAMS_CHANNEL_ID` from the environment or `.env.local` (do not print it). Look up the parent team via joined teams + channels.
+3. Upload `Daily Progress/pattern-data-delivery-progress-YYYY-MM-DD.md` to the channel Files folder
+4. POST a channel message with HTML body (report summary + link/attachment to the `.md`)
 
-The Adaptive Card includes a summary **and** the full report text (markdown flattened; Teams flowbot cannot attach a file or render HTML). Never print or commit the webhook URL. Setup: [references/teams-post.md](references/teams-post.md).
-
-**Interactive chat:** if the webhook is not configured, remind the user to post the **full progress `.md`** to Teams after standup (with source file attached).
+Never print tokens, client secrets, or `.env.local` values. If Lokka is not connected, say so and fall back to reminding the user to post the `.md` (optional: `post_progress_to_teams.py` webhook).
 
 ## When done
 
@@ -169,7 +170,7 @@ Reply with:
 4. Feature tracker counts — stories in progress, ready-for-PR, UAT-ready (`N/M`)
 5. Michael / Sarah / Islam focus one-liners
 6. Path-to-UAT gate progress
-7. Teams: PR URL + whether `post_progress_to_teams.py` succeeded; otherwise remind the user to post the full `.md` to Teams (Amr's request)
+7. Git: committed and pushed to **main** (or skipped if no changes). Teams: whether Lokka posted the `.md` to the channel; otherwise remind the user to post it (Amr's request)
 8. **Hamed / Nabawy:** Austin or Islam Jira access follow-up if still open
 
 ## Additional resources
@@ -178,6 +179,6 @@ Reply with:
 - [references/jira-sync.md](references/jira-sync.md) — Datavant JQL, DVI-1086 hierarchy, PR/CS parsing
 - [references/salesforce-deploy.md](references/salesforce-deploy.md) — changeset 3-pack, sandbox gates, wordings
 - [references/domain-decisions.md](references/domain-decisions.md) — delivery targets, Austin plan, team sources
-- [references/teams-post.md](references/teams-post.md) — Power Automate webhook and `TEAMS_WEBHOOK_URL`
+- [references/teams-post.md](references/teams-post.md) — Lokka / Microsoft Graph post of the progress `.md` to Teams
 - [references/automation-prompt.md](references/automation-prompt.md) — weekday-morning Cursor Automation prompt
-- [scripts/post_progress_to_teams.py](scripts/post_progress_to_teams.py) — POST Adaptive Card summary to Teams
+- [scripts/post_progress_to_teams.py](scripts/post_progress_to_teams.py) — optional webhook Adaptive Card fallback only

@@ -247,7 +247,7 @@ Mitigation owners: **Hamed / Nabawy** escalate to **Austin** where noted. Do **n
 | Austin / Jira access | Risks #1 + action items → **Hamed** or **Nabawy** |
 | PATTERNDATA wordings | Feature delivery tracker wordings column + Risks #2 |
 | Assigned next steps | **Standup action items** (last section) |
-| Teams posting cadence | Remind user (not in doc) |
+| Teams posting cadence | Post the `.md` via Lokka (not in the progress doc itself) |
 
 ---
 
