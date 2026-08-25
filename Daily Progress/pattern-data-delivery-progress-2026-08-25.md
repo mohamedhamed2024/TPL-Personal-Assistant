@@ -22,7 +22,7 @@
 
 | Phase | Owner | Status | What's done | What's left | Target | Forecast | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| **PD Sandbox finalize** | Team | In progress | <ul><li>Michael compared provider portal vs ChartSwap — only gap so far is the **upload file** page; documenting it</li><li>Islam finished an Excel inventory of Pattern Data UI text from pull requests</li></ul> | <ul><li>Compare Islam's Excel to **Youssef's wording document**, then move differences to **custom labels**</li><li>Align Austin / Van on which **record types** go in status sync</li><li>**PCI cart** look</li></ul> | Rolling | — | Standup **2026-08-25** — Thursday **2026-08-27** is a holiday (short week). Sarah on PTO |
+| **PD Sandbox finalize** | Team | In progress | <ul><li>Michael shipped **RF-035 threshold heal** on [LNI-3137](https://datavant.atlassian.net/browse/LNI-3137) PR #220 and [LNI-3223](https://datavant.atlassian.net/browse/LNI-3223) PR #223 — SMK-02 PASS on pddev</li><li>Michael compared provider portal vs ChartSwap — only gap so far is the **upload file** page</li><li>Islam finished an Excel inventory of Pattern Data UI text from pull requests</li></ul> | <ul><li>Compare Islam's Excel to **Youssef's wording document**, then move differences to **custom labels**</li><li>Align Austin / Van on which **record types** go in status sync</li><li>**PCI cart** look</li></ul> | Rolling | — | Standup **2026-08-25** — Thursday **2026-08-27** is a holiday (short week). Sarah on PTO |
 | **UAT Sandbox deploy** | Team | In progress | <ul><li>Payment Management deploy packages built; UAT upload in progress</li><li>Jira epic [LNI-2309](https://datavant.atlassian.net/browse/LNI-2309) moved to **UAT** (story [LNI-3137](https://datavant.atlassian.net/browse/LNI-3137) still In Progress)</li></ul> | <ul><li>Austin has **not started** promoting features — still busy with other work</li><li>Remaining features **one at a time**</li></ul> | **2026-08-31** | **2026-08-31** | Austin is shipping other work first, then Pattern Data |
 | **Production** | Team | Not started | — | <ul><li>UAT sign-off; production deploy packages per feature</li></ul> | **2026-09-30** | **2026-09-30** | Live release after UAT sign-off per Austin |
 
@@ -55,13 +55,13 @@
 
 | Story | Assignee | Jira status | Code review (PR) | Deploy packages | Client wordings | PD sandbox | UAT sandbox | Next step |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LNI-3137](https://datavant.atlassian.net/browse/LNI-3137) | Michael | In Progress | In review (#220) | Forward ✓ · Rollback ✓ · Settings ✓ | Pending approval | Tested | Upload in progress | **Update 2026-08-25:** Epic now **UAT** in Jira; Austin has not started promotion. Merge PR #220; finish UAT package upload |
+| [LNI-3137](https://datavant.atlassian.net/browse/LNI-3137) | Michael | In Progress | In review (#220) | Forward ✓ · Rollback ✓ · Settings ✓ | Pending approval | Tested | Upload in progress | **Update 2026-08-25:** RF-035 threshold heal on PR #220 (SMK-02 PASS). Epic **UAT** in Jira; Austin has not started promotion. Merge PR #220; finish UAT package upload |
 
 ### [LNI-2310 — AutoPay Submission Flow](https://datavant.atlassian.net/browse/LNI-2310)
 
 | Story | Assignee | Jira status | Code review (PR) | Deploy packages | Client wordings | PD sandbox | UAT sandbox | Next step |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LNI-3223](https://datavant.atlassian.net/browse/LNI-3223) | Michael | In Progress | Ready — finalize code review & deploy packages | Pending · Pending · — | Pending approval | In progress | Not deployed | New requestor Autopay Threshold stays **blank** (not zero); GetThreshold falls back to partner master |
+| [LNI-3223](https://datavant.atlassian.net/browse/LNI-3223) | Michael | In Progress | In review (#223) | Pending · Pending · — | Pending approval | In progress | Not deployed | **Update 2026-08-25:** RF-035 heal on PR #223 (SMK-02 PASS). New requestor Autopay Threshold stays **blank** (not zero); GetThreshold falls back to partner master |
 
 ### [LNI-2311 — Authenticate & Provision Users via SAML SSO](https://datavant.atlassian.net/browse/LNI-2311)
 
@@ -85,21 +85,21 @@
 
 | Story | Assignee | Jira status | Code review (PR) | Deploy packages | Client wordings | PD sandbox | UAT sandbox | Next step |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LNI-3139](https://datavant.atlassian.net/browse/LNI-3139) | Michael | In Progress | Ready — finalize code review & deploy packages | Pending · Pending · — | Pending approval | In progress | Not deployed | Refactor Patient Prefill API on pddev; finalize code review |
+| [LNI-3139](https://datavant.atlassian.net/browse/LNI-3139) | Michael | In Progress | In review (#219) | Pending · Pending · — | Pending approval | In progress | Not deployed | **Update 2026-08-25:** Prefill in-app nav skip QA PASS. Finalize PR #219; keep partner `externalReferenceId` passthrough |
 
 ### [LNI-3141 — Invoice Upload to S3](https://datavant.atlassian.net/browse/LNI-3141)
 
 | Story | Assignee | Jira status | Code review (PR) | Deploy packages | Client wordings | PD sandbox | UAT sandbox | Next step |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LNI-3142](https://datavant.atlassian.net/browse/LNI-3142) | Michael | In Progress | Ready — finalize code review & deploy packages | Pending · Pending · — | Pending approval | Not deployed | Not deployed | Finish Invoice S3 code on pddev; build deploy packages |
+| [LNI-3142](https://datavant.atlassian.net/browse/LNI-3142) | Michael | In Progress | In review (#216) | Pending · Pending · — | Pending approval | In progress | Not deployed | Finish Invoice S3 code review on PR #216; build deploy packages |
 
 ### [LNI-3216 — General](https://datavant.atlassian.net/browse/LNI-3216)
 
 | Story | Assignee | Jira status | Code review (PR) | Deploy packages | Client wordings | PD sandbox | UAT sandbox | Next step |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LNI-3225](https://datavant.atlassian.net/browse/LNI-3225) | Michael | In Progress | Ready — finalize code review & deploy packages | Pending · Pending · Pending | Pending approval | In progress | Not deployed | Turn off non-applicable features and emails for Pattern Data requests |
+| [LNI-3225](https://datavant.atlassian.net/browse/LNI-3225) | Michael | In Progress | In review (#211–#213) | Pending · Pending · Pending | Pending approval | In progress | Not deployed | Turn off non-applicable features and emails for Pattern Data requests |
 | [LNI-3763](https://datavant.atlassian.net/browse/LNI-3763) | Sarah | In Progress | Ready — finalize code review & deploy packages | Pending · Pending · — | Pending approval | In progress | Not deployed | **Update 2026-08-25:** Islam inventoried UI text from PRs — **compare to Youssef's wording document** (Hamed to send), then move ChartSwap vs Pattern Data differences to **custom labels** |
-| [LNI-3769](https://datavant.atlassian.net/browse/LNI-3769) | Michael | In Progress | Ready — finalize code review & deploy packages | Pending · Pending · Pending | Pending approval | Not deployed | Not deployed | Add ability to disable Mail Order / SFTP for Pattern Data accounts |
+| [LNI-3769](https://datavant.atlassian.net/browse/LNI-3769) | Michael | In Progress | In review (#231) | Pending · Pending · Pending | Pending approval | In progress | Not deployed | Add ability to disable Mail Order / SFTP for Pattern Data accounts |
 
 ---
 
@@ -107,8 +107,8 @@
 
 | Member | Focus |
 | --- | --- |
-| **Michael** | Document provider-portal **upload file** page gap vs ChartSwap; master rebase + related PR pushes (standup **2026-08-25**); [LNI-3226](https://datavant.atlassian.net/browse/LNI-3226) record types |
-| **Sarah** | PTO — Michael covers if her work needs a change ([LNI-3224](https://datavant.atlassian.net/browse/LNI-3224) SSO, [LNI-3763](https://datavant.atlassian.net/browse/LNI-3763) RequestShare) |
+| **Michael** | RF-035 threshold heal on [LNI-3137](https://datavant.atlassian.net/browse/LNI-3137) PR #220 and [LNI-3223](https://datavant.atlassian.net/browse/LNI-3223) PR #223; document provider-portal **upload file** page gap; [LNI-3226](https://datavant.atlassian.net/browse/LNI-3226) record types + [LNI-4708](https://datavant.atlassian.net/browse/LNI-4708) octet-stream PDFs |
+| **Sarah** | PTO — Michael covers if her work needs a change ([LNI-3224](https://datavant.atlassian.net/browse/LNI-3224) SSO PR #193, [LNI-3763](https://datavant.atlassian.net/browse/LNI-3763) RequestShare) |
 | **Islam** | Compare the Excel of Pattern Data UI text to **Youssef's wording document**; only custom-label items that differ ChartSwap vs Pattern Data |
 
 ---
@@ -147,12 +147,12 @@ Each item below is stated as a **condition → consequence**, with a mitigation 
 
 ## Standup action items (2026-08-25)
 
-*From [ChartSwap Daily Stand-up — 2026-08-25](../Transcript/ChartSwap%20Daily%20Stand%20up/ChartSwap-Daily-Stand-up-2026-08-25.docx).*
+*From [ChartSwap Daily Stand-up — 2026-08-25](../Transcript/ChartSwap%20Daily%20Stand%20up/ChartSwap-Daily-Stand-up-2026-08-25.docx) and live Jira comments the same day.*
 
 | Owner | Action |
 | --- | --- |
 | **Austin** | Get **HR approval** for Islam's Datavant account (IT gate); confirm when UAT promotion actually starts |
 | **Hamed** | Send Islam **Youssef's wording document/email**; keep following Austin on Islam's Datavant / Jira access until the account is live |
 | **Islam** | Compare the Excel of Pattern Data UI text to Youssef's wording document; custom-label only ChartSwap vs Pattern Data differences |
-| **Michael** | Document the provider-portal **upload file** page gap vs ChartSwap; finish related PR pushes after yesterday's master rebase |
+| **Michael** | Document the provider-portal **upload file** page gap vs ChartSwap; land **RF-035** on PR **#220** / **#223** |
 | **Nabawy** | Keep following Austin with Hamed on Islam's Datavant HR/IT approval |
