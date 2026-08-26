@@ -3,21 +3,6 @@
 **Feature:** [DVI-1086](https://datavant.atlassian.net/browse/DVI-1086) · **As of:** 2026-08-25  
 **Targets:** UAT sandbox **2026-08-31** · Production **2026-09-30**
 
-## How to read this report
-
-*Audience: delivery managers and stakeholders.*
-
-| If you see… | It means… |
-| --- | --- |
-| **PD Sandbox finalize** | Dev team finishing and testing features on the Pattern Data development sandbox (pddev) |
-| **UAT Sandbox deploy** | Approved features being moved **one at a time** to the pre-production UAT environment |
-| **Deploy packages** | Salesforce outbound **changesets** — bundled code/config uploaded between environments (Forward + Rollback + optional Settings per feature) |
-| **UAT-ready (N/M)** | **N** of **M** features have passed all gates to promote to UAT (code merged, packages validated, client wordings approved) |
-| **Pending approval** (wordings) | Client copy/labels not yet signed off — blocks attaching text to the deploy package |
-| **Deployment plan (Austin)** | Current feature promotion order and scope — set by engineering manager Austin; may change after each Austin meeting |
-
----
-
 ## Status at a glance
 
 | Phase | Owner | Status | What's done | What's left | Target | Forecast | Notes |
@@ -28,9 +13,9 @@
 
 ---
 
-## Deployment plan (Austin)
+## Daily update from Austin
 
-*Engineering manager **Austin** sets deployment order and scope — this may change after each Austin meeting or PD Review.*
+*What Austin directed — deployment priority, scope, and what's next. Updated from PD Review or Austin meetings; may change day to day.*
 
 | Priority | Feature / story | Environment | Status |
 | --- | --- | --- | --- |
@@ -39,7 +24,7 @@
 | 3 | **PCI cart** (not MPI) | pddev | Look this week — functionally works; page redesign possible |
 | — | Remaining 8 stories | pddev → UAT | Queue per Austin — record types for status sync TBD with Van |
 
-*Last plan input:* [PD Review with Austin — 2026-08-20](../Transcript/PDReviewWithAustin/PDReviewWithAustin-2026-08-20). Day-to-day from [ChartSwap Daily Stand-up — 2026-08-25](../Transcript/ChartSwap%20Daily%20Stand%20up/ChartSwap-Daily-Stand-up-2026-08-25.docx). No Austin-class transcript on **2026-08-25**. Remind Austin **Thursday is a holiday**. Sarah on PTO.
+*Last Austin input:* [PD Review with Austin — 2026-08-20](../Transcript/PDReviewWithAustin/PDReviewWithAustin-2026-08-20). Day-to-day from [ChartSwap Daily Stand-up — 2026-08-25](../Transcript/ChartSwap%20Daily%20Stand%20up/ChartSwap-Daily-Stand-up-2026-08-25.docx). No Austin-class transcript on **2026-08-25**. Remind Austin **Thursday is a holiday**. Sarah on PTO.
 
 ---
 
@@ -53,27 +38,27 @@
 
 *Epic Jira status: **UAT** (as of 2026-08-25).*
 
-| Story | Assignee | Jira status | Code review (PR) | Deploy packages | Client wordings | PD sandbox | UAT sandbox | Next step |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LNI-3137](https://datavant.atlassian.net/browse/LNI-3137) | Michael | In Progress | In review (#220) | Forward ✓ · Rollback ✓ · Settings ✓ | Pending approval | Tested | Upload in progress | **Update 2026-08-25:** RF-035 threshold heal on PR #220 (SMK-02 PASS). Epic **UAT** in Jira; Austin has not started promotion. Merge PR #220; finish UAT package upload |
+| Story | Assignee | Jira status | Delivery gates | Next step |
+| --- | --- | --- | --- | --- |
+| [LNI-3137](https://datavant.atlassian.net/browse/LNI-3137) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#220)</li><li><strong>Packages:</strong> Forward ✓ · Rollback ✓ · Settings ✓</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> Tested</li><li><strong>UAT sandbox:</strong> Upload in progress</li></ul> | **Update 2026-08-25:** RF-035 threshold heal on PR #220 (SMK-02 PASS). Epic **UAT** in Jira; Austin has not started promotion. Merge PR #220; finish UAT package upload |
 
 ### [LNI-2310 — AutoPay Submission Flow](https://datavant.atlassian.net/browse/LNI-2310)
 
-| Story | Assignee | Jira status | Code review (PR) | Deploy packages | Client wordings | PD sandbox | UAT sandbox | Next step |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LNI-3223](https://datavant.atlassian.net/browse/LNI-3223) | Michael | In Progress | In review (#223) | Pending · Pending · — | Pending approval | In progress | Not deployed | **Update 2026-08-25:** RF-035 heal on PR #223 (SMK-02 PASS). New requestor Autopay Threshold stays **blank** (not zero); GetThreshold falls back to partner master |
+| Story | Assignee | Jira status | Delivery gates | Next step |
+| --- | --- | --- | --- | --- |
+| [LNI-3223](https://datavant.atlassian.net/browse/LNI-3223) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#223)</li><li><strong>Packages:</strong> Pending · Pending · —</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> In progress</li><li><strong>UAT sandbox:</strong> Not deployed</li></ul> | **Update 2026-08-25:** RF-035 heal on PR #223 (SMK-02 PASS). New requestor Autopay Threshold stays **blank** (not zero); GetThreshold falls back to partner master |
 
 ### [LNI-2311 — Authenticate & Provision Users via SAML SSO](https://datavant.atlassian.net/browse/LNI-2311)
 
-| Story | Assignee | Jira status | Code review (PR) | Deploy packages | Client wordings | PD sandbox | UAT sandbox | Next step |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LNI-3224](https://datavant.atlassian.net/browse/LNI-3224) | Sarah | In Progress | In review (#193) | Pending · Pending · Pending | Pending approval | In progress | Not deployed | No new Account Active Flag this release — emergency firm SSO suspend is suffix the firm external ID (`-cancelled` / `-suspended`) |
+| Story | Assignee | Jira status | Delivery gates | Next step |
+| --- | --- | --- | --- | --- |
+| [LNI-3224](https://datavant.atlassian.net/browse/LNI-3224) | Sarah | In Progress | <ul><li><strong>PR:</strong> In review (#193)</li><li><strong>Packages:</strong> Pending · Pending · Pending</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> In progress</li><li><strong>UAT sandbox:</strong> Not deployed</li></ul> | No new Account Active Flag this release — emergency firm SSO suspend is suffix the firm external ID (`-cancelled` / `-suspended`) |
 
 ### [LNI-2312 — Status Sync — Request State Management & Webhook Notifications](https://datavant.atlassian.net/browse/LNI-2312)
 
-| Story | Assignee | Jira status | Code review (PR) | Deploy packages | Client wordings | PD sandbox | UAT sandbox | Next step |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LNI-3226](https://datavant.atlassian.net/browse/LNI-3226) | Michael | In Progress | In review (#222) | Pending · Pending · — | Pending approval | In progress | Not deployed | Align Austin / Van on which record types go in the API; send Nabawy the record-type table |
+| Story | Assignee | Jira status | Delivery gates | Next step |
+| --- | --- | --- | --- | --- |
+| [LNI-3226](https://datavant.atlassian.net/browse/LNI-3226) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#222)</li><li><strong>Packages:</strong> Pending · Pending · —</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> In progress</li><li><strong>UAT sandbox:</strong> Not deployed</li></ul> | Align Austin / Van on which record types go in the API; send Nabawy the record-type table |
 
 *Open subtasks*
 
@@ -83,23 +68,23 @@
 
 ### [LNI-2313 — Receive & Store Patient Data via Order Initialization API](https://datavant.atlassian.net/browse/LNI-2313)
 
-| Story | Assignee | Jira status | Code review (PR) | Deploy packages | Client wordings | PD sandbox | UAT sandbox | Next step |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LNI-3139](https://datavant.atlassian.net/browse/LNI-3139) | Michael | In Progress | In review (#219) | Pending · Pending · — | Pending approval | In progress | Not deployed | **Update 2026-08-25:** Prefill in-app nav skip QA PASS. Finalize PR #219; keep partner `externalReferenceId` passthrough |
+| Story | Assignee | Jira status | Delivery gates | Next step |
+| --- | --- | --- | --- | --- |
+| [LNI-3139](https://datavant.atlassian.net/browse/LNI-3139) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#219)</li><li><strong>Packages:</strong> Pending · Pending · —</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> In progress</li><li><strong>UAT sandbox:</strong> Not deployed</li></ul> | **Update 2026-08-25:** Prefill in-app nav skip QA PASS. Finalize PR #219; keep partner `externalReferenceId` passthrough |
 
 ### [LNI-3141 — Invoice Upload to S3](https://datavant.atlassian.net/browse/LNI-3141)
 
-| Story | Assignee | Jira status | Code review (PR) | Deploy packages | Client wordings | PD sandbox | UAT sandbox | Next step |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LNI-3142](https://datavant.atlassian.net/browse/LNI-3142) | Michael | In Progress | In review (#216) | Pending · Pending · — | Pending approval | In progress | Not deployed | Finish Invoice S3 code review on PR #216; build deploy packages |
+| Story | Assignee | Jira status | Delivery gates | Next step |
+| --- | --- | --- | --- | --- |
+| [LNI-3142](https://datavant.atlassian.net/browse/LNI-3142) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#216)</li><li><strong>Packages:</strong> Pending · Pending · —</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> In progress</li><li><strong>UAT sandbox:</strong> Not deployed</li></ul> | Finish Invoice S3 code review on PR #216; build deploy packages |
 
 ### [LNI-3216 — General](https://datavant.atlassian.net/browse/LNI-3216)
 
-| Story | Assignee | Jira status | Code review (PR) | Deploy packages | Client wordings | PD sandbox | UAT sandbox | Next step |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LNI-3225](https://datavant.atlassian.net/browse/LNI-3225) | Michael | In Progress | In review (#211–#213) | Pending · Pending · Pending | Pending approval | In progress | Not deployed | Turn off non-applicable features and emails for Pattern Data requests |
-| [LNI-3763](https://datavant.atlassian.net/browse/LNI-3763) | Sarah | In Progress | Ready — finalize code review & deploy packages | Pending · Pending · — | Pending approval | In progress | Not deployed | **Update 2026-08-25:** Islam inventoried UI text from PRs — **compare to Youssef's wording document** (Hamed to send), then move ChartSwap vs Pattern Data differences to **custom labels** |
-| [LNI-3769](https://datavant.atlassian.net/browse/LNI-3769) | Michael | In Progress | In review (#231) | Pending · Pending · Pending | Pending approval | In progress | Not deployed | Add ability to disable Mail Order / SFTP for Pattern Data accounts |
+| Story | Assignee | Jira status | Delivery gates | Next step |
+| --- | --- | --- | --- | --- |
+| [LNI-3225](https://datavant.atlassian.net/browse/LNI-3225) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#211–#213)</li><li><strong>Packages:</strong> Pending · Pending · Pending</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> In progress</li><li><strong>UAT sandbox:</strong> Not deployed</li></ul> | Turn off non-applicable features and emails for Pattern Data requests |
+| [LNI-3763](https://datavant.atlassian.net/browse/LNI-3763) | Sarah | In Progress | <ul><li><strong>PR:</strong> Ready — finalize code review & deploy packages</li><li><strong>Packages:</strong> Pending · Pending · —</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> In progress</li><li><strong>UAT sandbox:</strong> Not deployed</li></ul> | **Update 2026-08-25:** Islam inventoried UI text from PRs — **compare to Youssef's wording document** (Hamed to send), then move ChartSwap vs Pattern Data differences to **custom labels** |
+| [LNI-3769](https://datavant.atlassian.net/browse/LNI-3769) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#231)</li><li><strong>Packages:</strong> Pending · Pending · Pending</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> In progress</li><li><strong>UAT sandbox:</strong> Not deployed</li></ul> | Add ability to disable Mail Order / SFTP for Pattern Data accounts |
 
 ---
 

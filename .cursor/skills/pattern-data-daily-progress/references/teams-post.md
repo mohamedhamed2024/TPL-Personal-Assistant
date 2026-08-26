@@ -1,103 +1,67 @@
-# Teams post — Lokka (Microsoft Graph)
+# Teams post — incoming webhook (Adaptive Card)
 
-After today's progress markdown is on **main**, post **the `.md` file** to the Teams channel using the **Lokka** MCP server **`Lokka-Microsoft-365`**. Do not use Power Automate / `TEAMS_WEBHOOK_URL` unless Lokka is disconnected.
-
-Lokka is a Graph proxy: tool **`Lokka-Microsoft`** (`apiType: graph`, `path`, `method`, `body`).
+After today's progress markdown is on **main**, post a **full-width Adaptive Card** to the Teams channel using **`TEAMS_WEBHOOK_URL`** (Power Automate incoming webhook). Do **not** use Lokka / Microsoft Graph for Teams posting.
 
 ## One-time setup
 
-Project MCP is [`.cursor/mcp.json`](../../../mcp.json). Use the **default Lokka app** (no tenant/client IDs in `mcp.json`):
+1. Create a Power Automate flow: **When a Teams webhook request is received** → post the Adaptive Card (or use the project's existing manual webhook).
+2. Set `TEAMS_WEBHOOK_URL` in gitignored `.env.local` (repo root). Never commit or print it.
+3. Cloud Automations: store `TEAMS_WEBHOOK_URL` as an environment secret.
 
-```json
-{
-  "mcpServers": {
-    "Lokka-Microsoft-365": {
-      "command": "npx",
-      "args": ["-y", "@merill/lokka"]
-    }
-  }
-}
-```
-
-1. Reload the **Lokka-Microsoft-365** MCP server in Cursor Settings (MCP).
-2. Sign in with **Lokka connections** (say `lokka sign in`, or the agent opens the dialog). Do not expect Graph to work until a tenant connection appears.
-3. Grant delegated Graph scopes: `ChannelMessage.Send`, `Team.ReadBasic.All`, `Channel.ReadBasic.All`, `Files.ReadWrite.All` (or `Sites.ReadWrite.All`).
-4. Set `TEAMS_CHANNEL_ID` in gitignored `.env.local` (skill only — not passed to Lokka). Never commit or print it.
-
-Optional custom Entra app (only if the default Lokka app cannot consent): set `TENANT_ID` / `CLIENT_ID` from `MICROSOFT_TENANT_ID` / `MICROSOFT_CLIENT_ID`, `USE_INTERACTIVE=true`, and `REDIRECT_URI=http://localhost:3000` (must match the app registration — do **not** use `http://localhost` with no port).
-
-Cloud Automations: `TEAMS_CHANNEL_ID` as an environment secret, plus Lokka signed in for Cloud Agents. Custom-app secrets (`MICROSOFT_TENANT_ID` / `MICROSOFT_CLIENT_ID`) only if you use that path.
+`TEAMS_CHANNEL_ID` is **not** required for webhook posting (the flow already targets the channel).
 
 ## Each run (after the report exists)
 
-Read `Daily Progress/pattern-data-delivery-progress-YYYY-MM-DD.md`. Read `TEAMS_CHANNEL_ID` from the environment or `.env.local` **without printing it**.
+Read `Daily Progress/pattern-data-delivery-progress-YYYY-MM-DD.md`.
 
-### 1. Resolve the team from the channel
+### 1. Build and POST the Adaptive Card
 
-`TEAMS_CHANNEL_ID` is required. Team id is **not** required.
+From repo root (Windows: `py -3` if `python` is missing):
 
-- `GET /me/joinedTeams` (`$select=id,displayName`)
-- For each team, `GET /teams/{team-id}/channels` (`$select=id,displayName`) until `id` matches `TEAMS_CHANNEL_ID`
-- Use that `team-id` for upload + message calls
-
-If the channel is not in joined teams, stop and say Lokka/Graph cannot see that channel (membership or permission).
-
-### 2. Upload the `.md` to the channel Files tab
-
-```
-GET /teams/{team-id}/channels/{channel-id}/filesFolder
+```bash
+py -3 .cursor/skills/pattern-data-daily-progress/scripts/post_progress_to_teams.py --date YYYY-MM-DD
 ```
 
-Use `parentReference.driveId` and `id` (folder item), then:
+The script:
 
-```
-PUT /drives/{drive-id}/items/{folder-id}:/pattern-data-delivery-progress-YYYY-MM-DD.md:/content
-```
+- Maps the full report to Adaptive Card **1.5** (`targetWidth: VeryWide`, `msteams.width: Full`)
+- Includes **all** report sections: Status at a glance, Daily update from Austin, Feature tracker, Team focus, Path to UAT & Production, Risks & challenges
+- **Skips** legacy **How to read this report** and **Standup action items** if still in older files
+- Uses native **`Table`** elements for markdown pipe tables
+- Splits into multiple webhook messages at **## section** boundaries when the payload exceeds the ~28 KB cap
+- Waits **2 seconds** between parts (configurable with `--post-delay`) so Teams receives them in order
 
-UTF-8 body = the markdown file. If PUT content fails through Lokka, fall back to:
+Preview without posting:
 
-```
-PUT /groups/{team-id}/drive/root:/General/pattern-data-delivery-progress-YYYY-MM-DD.md:/content
-```
-
-(Use the channel folder name from `filesFolder` when it is not `General`.)
-
-### 3. Post a channel message that points at the file
-
-```
-POST /teams/{team-id}/channels/{channel-id}/messages
+```bash
+py -3 .cursor/skills/pattern-data-daily-progress/scripts/post_progress_to_teams.py --date YYYY-MM-DD --dry-run
 ```
 
-Body (HTML — Teams does not render raw `.md` in the message pane):
+Export card JSON only:
 
-```json
-{
-  "body": {
-    "contentType": "html",
-    "content": "<p><b>Pattern Data — delivery progress</b> (YYYY-MM-DD)</p><p>Full report in channel Files: pattern-data-delivery-progress-YYYY-MM-DD.md</p><p>Short HTML of glance / team focus / actions…</p>"
-  }
-}
+```bash
+py -3 .cursor/skills/pattern-data-daily-progress/scripts/post_progress_to_teams.py --date YYYY-MM-DD --export-card
 ```
 
-If the upload returned a `webUrl`, include it as a link. If Graph returns an attachment handle:
+Never print `TEAMS_WEBHOOK_URL` or paste it into chat.
 
-```json
-{
-  "attachments": [
-    {
-      "id": "1",
-      "contentType": "reference",
-      "contentUrl": "<item webUrl>",
-      "name": "pattern-data-delivery-progress-YYYY-MM-DD.md"
-    }
-  ]
-}
-```
+### 2. Markdown → card mapping
 
-and `<attachment id=\"1\"></attachment>` in the HTML.
+| Markdown | Teams card |
+| --- | --- |
+| `#` / `##` / `###` | Heading `TextBlock` |
+| `**bold**` · `_italic_` · `[label](url)` | TextBlock markdown |
+| `-` / `1.` lists | TextBlock lists |
+| `- [ ]` / `- [x]` | ☐ / ☑ checklist lines |
+| pipe tables | Native Adaptive Card **`Table`** |
+| `>` quotes | Emphasis `Container` |
+| ` ``` ` fences | `CodeBlock` |
+| `---` | Separator |
 
-Keep the HTML summary short. The **file** is what Amr asked for.
+## If posting fails
 
-## Fallback (Lokka unavailable)
+- Confirm `TEAMS_WEBHOOK_URL` is set in `.env.local` or the Cloud Agent secret.
+- Run `--dry-run` and check each part is under the size cap.
+- If HTTP 400, the Power Automate flow may expect a raw Adaptive Card root instead of `type: message` — the script retries automatically.
 
-Remind the user to post the `.md` in Teams manually. Optional last resort: [scripts/post_progress_to_teams.py](../scripts/post_progress_to_teams.py) + `TEAMS_WEBHOOK_URL` (Adaptive Card only — no real file attach).
+Do **not** upload the `.md` to channel Files unless the user asks — the card is the channel deliverable.

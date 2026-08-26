@@ -9,7 +9,7 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 - **Austin meeting / PD Review sync** — Update deployment plan, dates, and scope from Austin-class transcript
 - **Bootstrap new day** — Copy prior day's report and update header/sync dates
 - **Testing alignment** — Optionally sync `Testing Updates.md` after progress update
-- **Weekday morning job** — Jira-only report, commit to **main**, post `.md` to Teams via Lokka
+- **Weekday morning job** — Jira-only report, commit to **main**, post Adaptive Card to Teams via webhook
 
 ## How to Use
 
@@ -23,17 +23,16 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 
 1. Determine today's date and bootstrap the progress file (copy prior day or open existing)
 2. Extract standup and/or Austin-class transcript via `scripts/extract_standup.py` (`.docx` or plain text)
-3. Update **Deployment plan (Austin)** when a PD Review or Austin meeting transcript is available
+3. Update **Daily update from Austin** when a PD Review or Austin meeting transcript is available
 4. Sync DVI-1086 hierarchy from Datavant Jira (epics → stories → subtasks)
 5. Parse story comments for PR and changeset status
 6. Extract Islam focus from standup (default: RequestShare / LNI-3763 testing); exclude Youssef legacy subtasks
 7. Update report sections per template
 8. Compute Path to UAT/Prod progress (N/M features UAT-ready)
-9. Extract action items and append **Standup action items** table as the last section
-10. Optionally sync `Testing Updates.md`
-11. Delete temp files
-12. `git fetch` + `pull --ff-only`, commit and **push to main** (no PR)
-13. Post the progress `.md` to Teams via **Lokka** (Graph) per `references/teams-post.md`
+9. Optionally sync `Testing Updates.md`
+10. Delete temp files
+11. `git fetch` + `pull --ff-only`, commit and **push to main** (no PR)
+12. Post Adaptive Card to Teams via `TEAMS_WEBHOOK_URL` per `references/teams-post.md`
 
 ## Features
 
@@ -43,7 +42,7 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 
 ### Austin deployment plan
 - Engineering manager **Austin** sets feature promotion order — may change frequently
-- **Deployment plan (Austin)** section updated from PD Review or Austin meeting transcripts
+- **Daily update from Austin** section updated from PD Review or Austin meeting transcripts
 - No wave-based release language — feature-by-feature per Austin's current plan
 
 ### Jira Integration (Datavant)
@@ -54,17 +53,18 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 
 ### Report Sections
 - Status at a glance (PD Sandbox finalize, UAT Sandbox deploy, Production)
-- **Deployment plan (Austin)** — current promotion priority
+- **Daily update from Austin** — what Austin directed (deployment priority and queue)
 - Feature delivery tracker (per epic: PR, changesets, wordings, sandbox columns)
-- Team focus (Michael · Sarah · Islam); PM actions → Hamed / Nabawy
+- Team focus (Michael · Sarah · Islam); PM follow-ups → Hamed / Nabawy in Risks
 - Path to UAT & Production (checklist + N/M progress)
 - Risks & challenges (**two standing risks** — Islam Jira access, client wordings)
-- Standup action items (Owner × Action — **open actions only**)
+
+### Teams posting
+- `scripts/post_progress_to_teams.py` — full-width Adaptive Card 1.5 via `TEAMS_WEBHOOK_URL` (native tables; skips legacy Standup action items if present)
 
 ### MCP Tools Used
 - `searchJiraIssuesUsingJql` — fetch DVI-1086 hierarchy
 - `getJiraIssue` — story comments for PR/changeset parsing
-- `Lokka-Microsoft-365` / `Lokka-Microsoft` — Microsoft Graph: upload the progress `.md` and post it to the Teams channel
 
 ## Configuration Sources
 
@@ -76,18 +76,18 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 | `Transcript/Austin Meeting/Pattern-Data-Austin-*.docx` | Shorter Austin engineering-manager meeting |
 | `Testing Updates.md` | Testing tracker to align (optional) |
 | Jira feature DVI-1086 | Story/subtask status source of truth |
+| `.env.local` | `TEAMS_WEBHOOK_URL` (gitignored) |
 
 ## Weekday morning automation → Teams
 
-A Cursor Automation can run this skill on a weekday morning from **Jira only** (skip missing transcripts), **commit to main**, and post the progress `.md` to a Teams channel with **Lokka**.
+A Cursor Automation can run this skill on a weekday morning from **Jira only** (skip missing transcripts), **commit to main**, and post the Adaptive Card to a Teams channel via webhook.
 
 | Piece | Where |
 |-------|--------|
-| Lokka + Graph + channel IDs | [references/teams-post.md](references/teams-post.md) |
+| Webhook + posting | [references/teams-post.md](references/teams-post.md) |
 | Automation prompt | [references/automation-prompt.md](references/automation-prompt.md) |
-| Lokka MCP | [`.cursor/mcp.json`](../../mcp.json) (`Lokka-Microsoft-365` — default Lokka app; sign in via connections UI) |
 
-Create the live job in the **Agents Window** (`/automate`) or at [cursor.com/automations](https://cursor.com/automations). Store `MICROSOFT_TENANT_ID`, `MICROSOFT_CLIENT_ID`, and `TEAMS_CHANNEL_ID` as Cloud Agent secrets — never commit them.
+Create the live job in the **Agents Window** (`/automate`) or at [cursor.com/automations](https://cursor.com/automations). Store `TEAMS_WEBHOOK_URL` as a Cloud Agent secret — never commit it.
 
 ## Skill Info
 

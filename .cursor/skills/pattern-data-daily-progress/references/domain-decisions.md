@@ -20,7 +20,7 @@ Dates are **indicative** — **Austin** (engineering manager) may change deploym
 | Engineering manager | **Austin** | Deployment priority, scope in/out, UAT/Prod dates, next feature to promote |
 
 - Austin may **change the plan frequently** — do not hard-code a fixed release sequence beyond what Austin last confirmed
-- **Deployment plan (Austin)** section in each report reflects the latest Austin input
+- **Daily update from Austin** section in each report reflects the latest Austin input
 - **Austin-class transcripts** (latest dated file wins):
   - `Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD` — PD Review with Austin (plain text, `.txt`, or `.docx`)
   - `Transcript/Austin Meeting/Pattern-Data-Austin-YYYY-MM-DD.docx` — shorter Austin meeting

@@ -32,7 +32,7 @@ Read these on demand when a task requires deeper context. Do not load them all p
 | `.cursor/skills/pattern-data-daily-progress/references/document-template.md` | Report section templates and formatting rules |
 | `.cursor/skills/pattern-data-daily-progress/references/jira-sync.md` | Datavant DVI-1086 JQL and PR/changeset parsing |
 | `.cursor/skills/pattern-data-daily-progress/references/salesforce-deploy.md` | Changeset 3-pack rules and sandbox gates |
-| `.cursor/skills/pattern-data-daily-progress/references/teams-post.md` | Lokka / Graph post of the progress `.md` to Teams |
+| `.cursor/skills/pattern-data-daily-progress/references/teams-post.md` | Teams webhook Adaptive Card post |
 | `.cursor/skills/pattern-data-daily-progress/references/automation-prompt.md` | Weekday-morning Cursor Automation prompt |
 | `.cursor/skills/daily-time-log/references/document-template.md` | Daily time log table layout and 1d = 7h rules |
 | `.cursor/skills/send-daily-timelog/references/recipient-map.md` | Integrant email addresses for time log reminders |
@@ -44,9 +44,9 @@ Read these on demand when a task requires deeper context. Do not load them all p
 - **Jira is source of truth** for feature delivery — re-fetch DVI-1086 hierarchy (LNI epics → stories → subtasks) before each progress update.
 - **Team focus:** Michael and Sarah from Jira assignees; Islam from standup (default: **RequestShare / LNI-3763** testing on pddev). **Exclude Youssef Yahia** — off project; legacy Jira subtasks are ignored.
 - **Changesets:** each feature needs Feature + Rollback CS (+ optional Properties CS); validate on target sandbox; PATTERNDATA wordings must be approved before attach.
-- **Austin (engineering manager)** sets deployment priority — update **Deployment plan (Austin)** from PD Review or Austin meeting transcript when provided; no wave-based release language.
+- **Austin (engineering manager)** sets deployment priority — update **Daily update from Austin** from PD Review or Austin meeting transcript when provided; no wave-based release language.
 - **UAT promotion** is feature-by-feature per Austin's plan, not one mega-changeset.
-- **Teams** — after committing today's progress to **main**, post the `.md` via **Lokka-Microsoft-365** (sign in via Lokka connections; destination `TEAMS_CHANNEL_ID`). See `teams-post.md`. Do not open a PR for the daily report.
+- **Teams** — after committing today's progress to **main**, post an Adaptive Card via `TEAMS_WEBHOOK_URL` (`scripts/post_progress_to_teams.py`). See `teams-post.md`. Do not open a PR for the daily report.
 - **Delete temp files** — remove `_standup_extract.txt` and other extraction artifacts when done.
 
 ---

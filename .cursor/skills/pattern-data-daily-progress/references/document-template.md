@@ -15,22 +15,9 @@
 
 **Feature:** [DVI-1086](https://datavant.atlassian.net/browse/DVI-1086) · **As of:** YYYY-MM-DD  
 **Targets:** UAT sandbox **2026-08-31** · Production **2026-09-30**
-
-## How to read this report
-
-*Audience: delivery managers and stakeholders.*
-
-| If you see… | It means… |
-| --- | --- |
-| **PD Sandbox finalize** | Dev team finishing and testing features on the Pattern Data development sandbox (pddev) |
-| **UAT Sandbox deploy** | Approved features being moved **one at a time** to the pre-production UAT environment |
-| **Deploy packages** | Salesforce outbound **changesets** — bundled code/config uploaded between environments (Forward + Rollback + optional Settings per feature) |
-| **UAT-ready (N/M)** | **N** of **M** features have passed all gates to promote to UAT (code merged, packages validated, client wordings approved) |
-| **Pending approval** (wordings) | Client copy/labels not yet signed off — blocks attaching text to the deploy package |
-| **Deployment plan (Austin)** | Current feature promotion order and scope — set by engineering manager Austin; may change after each Austin meeting |
 ```
 
-Include the **How to read this report** block in every progress file (after the header, before Status at a glance). Do **not** link to `.cursor/` paths in the deliverable — keep glossary inline only.
+Do **not** include a separate glossary block. Spell out jargon on first use in section text (see Writing style). Do **not** link to `.cursor/` paths in the deliverable.
 
 **Do not use wave / Wave 1 / Wave 2 language** anywhere in progress reports — retired delivery model.
 
@@ -38,15 +25,14 @@ Include the **How to read this report** block in every progress file (after the 
 
 | Section | Update when |
 |---------|-------------|
-| **Deployment plan (Austin)** | **Austin-class transcript** (PD Review with Austin or Austin meeting) — priority order, scope in/out, next-up after wrap-up; replace table when Austin changes plan |
+| **Daily update from Austin** | **Austin-class transcript** (PD Review with Austin or Austin meeting) — priority order, scope in/out, next-up after wrap-up; replace table when Austin changes plan |
 | **Status at a glance** — all phase rows | Standup **or** Austin-class: closed subtasks, CS uploads, deploy decisions, **Forecast slips**. Do **not** accumulate historical bullets across days. |
 | **Feature delivery tracker** | Re-sync from Jira before editing; append `**Update YYYY-MM-DD:**` in Next step when standup or Austin adds detail |
 | **Team focus** | Michael/Sarah from Jira assignees; **Islam** from standup (default: RequestShare / LNI-3763); **exclude Youssef Yahia** subtasks |
 | **Path to UAT & Production** | Recompute `N/M features UAT-ready` from tracker; adjust target dates only when **Austin** or standup confirms a slip |
 | **Risks & challenges** | Keep the **two standing risks** unless user adds new ones; condition → consequence → mitigation format |
-| **Standup action items** | Replace entirely from today's standup and/or Austin meeting (last section) |
 
-**Do not include:** Open delivery blockers (OC bugs), Client release plan, Flow to be retested, Pre-UAT provider matrix, or "Other in-flight work".
+**Do not include:** Open delivery blockers (OC bugs), Client release plan, Flow to be retested, Pre-UAT provider matrix, Other in-flight work, or **Standup action items** (use `Daily Actions/` for action tracking if needed).
 
 **Do not edit** the plan file if user attached one for reference only.
 
@@ -54,7 +40,7 @@ Include the **How to read this report** block in every progress file (after the 
 
 The primary readers are **delivery managers**, not Salesforce developers. Apply these rules in every progress file:
 
-- **Spell out or explain jargon** on first use in each report (see *How to read this report* block after the header).
+- **Spell out or explain jargon** on first use in each report (e.g. deploy packages, UAT-ready, pddev).
 - Prefer **Deploy packages** over bare **CS** in tables and Notes; use `Forward · Rollback · Settings` instead of cryptic `Feature ✓ · Rollback ✓ · Properties ✓` when the report is manager-facing (either format OK if a legend is present).
 - **Notes** columns and phase rows: plain English — what changed, what blocks the date, who owns the escalation.
 - **Next step** column: one outcome a manager can track (not internal dev shorthand).
@@ -82,29 +68,31 @@ Use HTML lists inside table cells. **Keep each cell concise — plan-affecting u
 
 ---
 
-## Deployment plan (Austin)
+## Daily update from Austin
 
-Engineering manager **Austin** sets which features deploy next and may change the plan frequently. Place this section **after Status at a glance**, before Feature delivery tracker.
+Engineering manager **Austin** sets what ships next and may change direction frequently. Place this section **after Status at a glance**, before Feature delivery tracker.
 
 ```markdown
-## Deployment plan (Austin)
+## Daily update from Austin
 
-*Engineering manager **Austin** sets deployment order and scope — this may change after each Austin meeting or PD Review. Update this block from the latest Austin-class transcript when provided.*
+*What Austin directed — deployment priority, scope, and what's next. Updated from PD Review or Austin meetings; may change day to day.*
 
 | Priority | Feature / story | Environment | Status |
 | --- | --- | --- | --- |
 | 1 | [LNI-3137](...) Payment Management | UAT sandbox | Upload in progress |
 | 2 | Approved Fee overhaul | pddev | Next after current wrap-up (Austin) |
 
-*Last plan input:* [PD Review with Austin — YYYY-MM-DD](../Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD)*
+*Last Austin input:* [PD Review with Austin — YYYY-MM-DD](../Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD)*
 ```
 
 - **Priority 1** = next feature Austin directed for promotion or active UAT work
 - Remaining rows = queue or "TBD until Austin meeting"
-- If no Austin-class transcript: carry forward prior day's plan or infer from Jira UAT column + standup; note `*Last plan input:* baseline from Jira sync YYYY-MM-DD — no Austin meeting or PD Review transcript on file yet.*`
+- If no Austin-class transcript: carry forward prior day's table or infer from Jira UAT column + standup; note `*Last Austin input:* baseline from Jira sync YYYY-MM-DD — no Austin meeting or PD Review transcript on file yet.*`
 - Prefer **PD Review with Austin** over `Pattern-Data-Austin` when both exist for the same date
 - If the PD Review file jumps timestamps, note the gap and cite Jira **Austin requirement sync** comments from that date as the backfill source
 - When Austin reprioritizes, **replace the table** — do not append stale priorities
+
+Legacy heading `## Deployment plan (Austin)` in older files is the same section — rename when editing.
 
 ---
 
@@ -119,9 +107,9 @@ Engineering manager **Austin** sets which features deploy next and may change th
 
 ### [LNI-#### — Epic title](https://datavant.atlassian.net/browse/LNI-####)
 
-| Story | Assignee | Jira status | Code review (PR) | Deploy packages | Client wordings | PD sandbox | UAT sandbox | Next step |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LNI-####](...) | Michael | In Progress | In review (#220) | Forward ✓ · Rollback ✓ · Settings — | Pending approval | Tested | Upload in progress | Complete UAT package upload; get wordings approved |
+| Story | Assignee | Jira status | Delivery gates | Next step |
+| --- | --- | --- | --- | --- |
+| [LNI-####](...) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#220)</li><li><strong>Packages:</strong> Forward ✓ · Rollback ✓ · Settings —</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> Tested</li><li><strong>UAT sandbox:</strong> Upload in progress</li></ul> | Complete UAT package upload; get wordings approved |
 ```
 
 One `### Epic` subsection per **active epic** under DVI-1086 (status In Progress or UAT). Table rows = **open stories** (`statusCategory != Done`) under that epic.
@@ -133,12 +121,10 @@ One `### Epic` subsection per **active epic** under DVI-1086 (status In Progress
 | **Story** | Link `[LNI-####](https://datavant.atlassian.net/browse/LNI-####)` + short summary if space allows |
 | **Assignee** | First name from Jira (`Michael`, `Sarah`) or `—` |
 | **Jira status** | Live status name (In Progress, Code Review, QA, UAT, etc.) |
-| **Code review (PR)** | Parse story comments — see [jira-sync.md](jira-sync.md). No open PR → **`Ready — finalize code review & deploy packages`** |
-| **Deploy packages** | Three checks: `Forward ✓/Pending · Rollback ✓/Pending · Settings ✓/Pending/—` (Settings optional — show `—` when N/A). *Alias for devs: Feature / Rollback / Properties.* |
-| **Client wordings** | `Pending approval` or `Approved — attach to package` (PATTERNDATA labels) |
-| **PD sandbox** | `Not deployed` / `In progress` / `Tested` on **pddev** |
-| **UAT sandbox** | `Not deployed` / `In progress` / `Tested` |
+| **Delivery gates** | One cell, HTML `<ul><li>` bullets — **PR**, **Packages** (Forward · Rollback · Settings), **Wordings**, **PD sandbox**, **UAT sandbox**. See [jira-sync.md](jira-sync.md) for PR/CS parsing. |
 | **Next step** | One line; prefix `**Update YYYY-MM-DD:**` for standup deltas |
+
+Legacy wide tables (separate PR / packages / wordings / sandbox columns) are still accepted; the Teams card script merges them automatically.
 
 ### Open subtasks (below each epic table)
 
@@ -186,7 +172,7 @@ Use for Path to UAT progress line: `**N/M features UAT-ready**`.
 | **Islam** | **Standup transcript** when Islam is mentioned; **default (no standup):** testing **RequestShare** [LNI-3763](https://datavant.atlassian.net/browse/LNI-3763) on pddev — feature implemented by Sarah |
 | **Youssef** | **Never include** — off project; exclude his Jira assignee rows and subtasks |
 
-Standing note (assign to **Hamed** or **Nabawy** in action items when still open): **Follow up with Austin on Islam's Jira access**.
+Standing note (assign to **Hamed** or **Nabawy** in Risks mitigations when still open): **Follow up with Austin on Islam's Jira access**.
 
 ---
 
@@ -238,48 +224,16 @@ Mitigation owners: **Hamed / Nabawy** escalate to **Austin** where noted. Do **n
 
 | Transcript topic | Where it goes |
 |------------------|---------------|
-| Deployment order / next feature / scope cut / next-up after wrap-up | **Deployment plan (Austin)** + Status at a glance Forecast |
-| Approved Fee overhaul / PCI cart / account flag | **Deployment plan (Austin)** + tracker Next step + action items |
+| Deployment order / next feature / scope cut / next-up after wrap-up | **Daily update from Austin** + Status at a glance Forecast |
+| Approved Fee overhaul / PCI cart / account flag | **Daily update from Austin** + tracker Next step |
 | Date slip or new target | Status at a glance Forecast + Path to UAT targets |
 | Story/subtask progress | Feature delivery tracker Next step + Status at a glance |
 | PR / changeset / deploy | Feature delivery tracker columns + Path to UAT |
 | Islam QA / testing | Team focus (Islam row) only — not a Path to UAT gate |
-| Austin / Jira access | Risks #1 + action items → **Hamed** or **Nabawy** |
+| Austin / Jira access | Risks #1 mitigations → **Hamed** or **Nabawy** |
 | PATTERNDATA wordings | Feature delivery tracker wordings column + Risks #2 |
-| Assigned next steps | **Standup action items** (last section) |
-| Teams posting cadence | Post the `.md` via Lokka (not in the progress doc itself) |
-
----
-
-## Standup action items (last section)
-
-Always the **final section** in the progress file. Extract from **today's standup and/or Austin-class transcript** — not from `Daily Actions/` files or prior progress reports. Replace entirely on each sync.
-
-```markdown
----
-
-## Standup action items (YYYY-MM-DD)
-
-*From [PD Review with Austin — YYYY-MM-DD](../Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD) and/or [ChartSwap Daily Stand-up — YYYY-MM-DD](../Transcript/ChartSwap%20Daily%20Stand%20up/ChartSwap-Daily-Stand-up-YYYY-MM-DD.docx).*
-
-| Owner | Action |
-| --- | --- |
-| **Michael** | Finalize **PR #220** and upload apex CS to UAT for [LNI-3137](...) |
-| **Sarah** | Continue **SAML SSO** refactor on pddev |
-| **Islam** | Test **RequestShare** ([LNI-3763](https://datavant.atlassian.net/browse/LNI-3763)) on pddev — Sarah's implementation |
-```
-
-### Table rules
-
-| Column | Rule |
-| --- | --- |
-| **Owner** | **Michael**, **Sarah**, **Islam**, **Team**, **Hamed**, or **Nabawy** (PM — client escalations, access, timeline) |
-| **Action** | One clear outcome per row; bold key terms; avoid dev jargon without context |
-
-- **Open actions only** — omit items completed in the meeting; put closures in Status at a glance *What's done* or tracker instead
-- Link LNI keys: `[LNI-####](https://datavant.atlassian.net/browse/LNI-####)`
-- Sort rows alphabetically by owner
-- Omit section only when no standup transcript was available, or no open actions remain
+| Assigned next steps | Tracker **Next step**, Status at a glance, or Risks mitigations |
+| Teams posting cadence | Post Adaptive Card via `TEAMS_WEBHOOK_URL` (not in the progress doc itself) |
 
 ---
 
