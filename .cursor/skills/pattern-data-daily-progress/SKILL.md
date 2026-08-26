@@ -138,6 +138,8 @@ Copy this checklist and track progress:
 
 **Morning automation (Jira-only):** a weekday Cursor Automation may run before standup transcripts exist. If today's ChartSwap standup `.docx` and Austin-class transcript are missing, skip transcript extraction (checklist 3 / 3b). Keep Austin's last deployment plan. Default Islam to RequestShare / LNI-3763. Still bootstrap today's file and sync Jira. See [references/automation-prompt.md](references/automation-prompt.md).
 
+**Transcript arrives later same day:** if a morning Jira-only file was already written and today's standup `.docx` or Austin-class transcript is added afterward, **re-run the skill** (or update in place): extract the transcript and apply standup/Austin deltas to **Status at a glance**, **Team focus**, **Feature delivery tracker** Next step, **Daily update from Austin** day-to-day notes, and **Risks** — do not leave a "no transcript yet" note once the file exists.
+
 
 
 **If today's file does not exist:** copy the most recent `Daily Progress/pattern-data-delivery-progress-*.md` and rename to today's date. Update only:
@@ -224,7 +226,17 @@ Standing item: **Hamed** or **Nabawy** follows up with **Austin on Islam's Jira 
 
 Apply standup + Austin-class deltas to the progress report. See [references/document-template.md](references/document-template.md) for section structure, transcript mapping, and worked examples.
 
+### Standup content vs Standup action items section
 
+**Removing the Standup action items section is not removing standup from the report.** The retired block was only the bottom `## Standup action items` table. Standup transcripts must still drive:
+
+- **Status at a glance** — today's What's done / What's left / Notes
+- **Team focus** — especially Islam; Michael/Sarah day-to-day when standup mentions them
+- **Feature delivery tracker** — `**Update YYYY-MM-DD:**` in Next step
+- **Daily update from Austin** — day-to-day standup notes (Austin-class transcripts still own deployment priority)
+- **Risks & challenges** — mitigations when standup surfaces blockers
+
+Assigned follow-ups go in those sections — **not** in a separate action-items table. Use `Daily Actions/daily-actions-YYYY-MM-DD.md` if a standalone action tracker is needed.
 
 Put assigned next steps in **tracker Next step**, **Status at a glance**, or **Risks** mitigations — not a separate action-items section.
 

@@ -34,6 +34,8 @@ Do **not** include a separate glossary block. Spell out jargon on first use in s
 
 **Do not include:** Open delivery blockers (OC bugs), Client release plan, Flow to be retested, Pre-UAT provider matrix, Other in-flight work, or **Standup action items** (use `Daily Actions/` for action tracking if needed).
 
+**Standup action items section vs standup-driven content:** Dropping `## Standup action items` means **only** that section is omitted from the markdown and Teams card. You must still extract the standup transcript and update **Status at a glance**, **Team focus**, **Feature delivery tracker** Next step, **Daily update from Austin** (day-to-day), and **Risks** from standup content. If a morning Jira-only report was written before the standup `.docx` existed, update again when the transcript is available — replace carry-forward / "no transcript yet" notes with today's standup bullets.
+
 **Do not edit** the plan file if user attached one for reference only.
 
 ## Writing style — manager audience
