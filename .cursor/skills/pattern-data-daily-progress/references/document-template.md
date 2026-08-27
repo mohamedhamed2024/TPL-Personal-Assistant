@@ -4,7 +4,7 @@
 
 - Progress: `Daily Progress/pattern-data-delivery-progress-YYYY-MM-DD.md`
 - Standup transcript: `Transcript/ChartSwap Daily Stand up/ChartSwap-Daily-Stand-up-YYYY-MM-DD.docx`
-- PD Review with Austin: `Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD` (plain text, `.txt`, or `.docx`)
+- PD Review with Austin: `Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD.docx` (Microsoft Word; legacy plain text without extension still supported)
 - Austin meeting transcript: `Transcript/Austin Meeting/Pattern-Data-Austin-YYYY-MM-DD.docx`
 - Actions: `Daily Actions/daily-actions-YYYY-MM-DD.md` (optional — not used as source for the progress report)
 
@@ -84,13 +84,14 @@ Engineering manager **Austin** sets what ships next and may change direction fre
 | 1 | [LNI-3137](...) Payment Management | UAT sandbox | Upload in progress |
 | 2 | Approved Fee overhaul | pddev | Next after current wrap-up (Austin) |
 
-*Last Austin input:* [PD Review with Austin — YYYY-MM-DD](../Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD)*
+*Last Austin input:* [PD Review with Austin — YYYY-MM-DD](../Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD.docx)*
 ```
 
 - **Priority 1** = next feature Austin directed for promotion or active UAT work
 - Remaining rows = queue or "TBD until Austin meeting"
 - If no Austin-class transcript: carry forward prior day's table or infer from Jira UAT column + standup; note `*Last Austin input:* baseline from Jira sync YYYY-MM-DD — no Austin meeting or PD Review transcript on file yet.*`
 - Prefer **PD Review with Austin** over `Pattern-Data-Austin` when both exist for the same date
+- PD Review source is a **Word `.docx`** file (`PDReviewWithAustin-YYYY-MM-DD.docx`). The file may contain both meeting transcript and embedded reference docs (e.g. wordings tracker) — use transcript for deployment plan; wordings sections for Risks and delivery gates
 - If the PD Review file jumps timestamps, note the gap and cite Jira **Austin requirement sync** comments from that date as the backfill source
 - When Austin reprioritizes, **replace the table** — do not append stale priorities
 

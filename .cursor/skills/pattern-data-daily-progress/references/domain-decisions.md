@@ -22,7 +22,7 @@ Dates are **indicative** — **Austin** (engineering manager) may change deploym
 - Austin may **change the plan frequently** — do not hard-code a fixed release sequence beyond what Austin last confirmed
 - **Daily update from Austin** section in each report reflects the latest Austin input
 - **Austin-class transcripts** (latest dated file wins):
-  - `Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD` — PD Review with Austin (plain text, `.txt`, or `.docx`)
+  - `Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD.docx` — PD Review with Austin (Microsoft Word; canonical). Legacy plain-text copies without extension still supported.
   - `Transcript/Austin Meeting/Pattern-Data-Austin-YYYY-MM-DD.docx` — shorter Austin meeting
 - Prefer **PD Review** when both exist for the same date
 - When Austin and Jira disagree on priority, **Austin-class transcript wins** for deployment order; Jira wins for dev status

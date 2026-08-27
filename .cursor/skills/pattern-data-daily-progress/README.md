@@ -14,7 +14,7 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 ## How to Use
 
 1. **Run daily sync**: *"Update today's progress report"* or *"Standup sync"*
-2. **After PD Review or Austin meeting**: *"Sync from Austin transcript"* — attach or reference `PDReviewWithAustin-YYYY-MM-DD` or `Pattern-Data-Austin-YYYY-MM-DD.docx`
+2. **After PD Review or Austin meeting**: *"Sync from Austin transcript"* — attach or reference `PDReviewWithAustin-YYYY-MM-DD.docx` or `Pattern-Data-Austin-YYYY-MM-DD.docx`
 3. **Bootstrap today**: *"Create today's pattern-data-delivery-progress file"*
 4. **With transcript**: Attach or reference standup `.docx` or Austin-class file (plain text or `.docx`)
 5. Invoke from chat: `/pattern-data-daily-progress` (or ask for a daily progress update)
@@ -22,7 +22,7 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 ## Workflow
 
 1. Determine today's date and bootstrap the progress file (copy prior day or open existing)
-2. Extract standup and/or Austin-class transcript via `scripts/extract_standup.py` (`.docx` or plain text)
+2. Extract standup and/or Austin-class transcript via `scripts/extract_standup.py` (`.docx` Word files; legacy plain-text PD Review without extension)
 3. Update **Daily update from Austin** when a PD Review or Austin meeting transcript is available
 4. Sync DVI-1086 hierarchy from Datavant Jira (epics → stories → subtasks)
 5. Parse story comments for PR and changeset status
@@ -37,7 +37,7 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 ## Features
 
 ### Transcript extraction
-- Arabic/English mixed `.docx` (standup + Austin meeting) and **plain-text PD Review** files (often no extension)
+- Microsoft Word `.docx` transcripts (standup, PD Review, Austin meeting); Arabic/English mixed. PD Review `.docx` may include meeting transcript plus embedded reference material (e.g. wordings doc)
 - `scripts/extract_standup.py` writes UTF-8 output (avoids Windows console encoding issues)
 
 ### Austin deployment plan
@@ -72,7 +72,7 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 |------|-----------------|
 | `Daily Progress/pattern-data-delivery-progress-*.md` | Prior report to bootstrap or update |
 | `Transcript/ChartSwap Daily Stand up/ChartSwap-Daily-Stand-up-*.docx` | Daily standup transcript |
-| `Transcript/PDReviewWithAustin/PDReviewWithAustin-*` | PD Review with Austin (plain text or `.docx`) |
+| `Transcript/PDReviewWithAustin/PDReviewWithAustin-*.docx` | PD Review with Austin (Microsoft Word meeting transcript; may include embedded wordings reference) |
 | `Transcript/Austin Meeting/Pattern-Data-Austin-*.docx` | Shorter Austin engineering-manager meeting |
 | `Testing Updates.md` | Testing tracker to align (optional) |
 | Jira feature DVI-1086 | Story/subtask status source of truth |

@@ -60,7 +60,7 @@
 
 | Story | Assignee | Jira status | Delivery gates | Next step |
 | --- | --- | --- | --- | --- |
-| [LNI-3226](https://datavant.atlassian.net/browse/LNI-3226) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#221, #222)</li><li><strong>Packages:</strong> Pending · Pending · —</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> In progress</li><li><strong>UAT sandbox:</strong> Not deployed</li></ul> | **Update 2026-08-26:** Austin — call it <strong>request sync</strong> (not status sync); upload trigger OK. Van alignment on post-completed upload / request ID on upload object — Austin messaging Van |
+| [LNI-3226](https://datavant.atlassian.net/browse/LNI-3226) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#221, #222)</li><li><strong>Packages:</strong> Pending · Pending · —</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> In progress</li><li><strong>UAT sandbox:</strong> Not deployed</li></ul> | **Update 2026-08-26:** Austin — call it **request sync** (not status sync); upload trigger OK. Van alignment on post-completed upload / request ID on upload object — Austin messaging Van |
 
 *Open subtasks*
 

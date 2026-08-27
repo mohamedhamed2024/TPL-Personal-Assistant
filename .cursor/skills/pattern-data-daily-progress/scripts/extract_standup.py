@@ -3,7 +3,7 @@
 
 Supports .docx and already-plain files (.txt or no extension). Usage:
   python scripts/extract_standup.py "Transcript/ChartSwap Daily Stand up/ChartSwap-Daily-Stand-up-2026-06-07.docx"
-  python scripts/extract_standup.py "Transcript/PDReviewWithAustin/PDReviewWithAustin-2026-08-20" -o _austin_extract.txt
+  python scripts/extract_standup.py "Transcript/PDReviewWithAustin/PDReviewWithAustin-2026-08-20.docx" -o _austin_extract.txt
 Writes UTF-8 text to stdout or -o file.
 """
 from pathlib import Path

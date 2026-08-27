@@ -38,7 +38,7 @@ Build or update the dated delivery progress markdown from standup transcripts, *
 
 - `Transcript/ChartSwap Daily Stand up/ChartSwap-Daily-Stand-up-YYYY-MM-DD.docx` — daily standup transcript
 
-- `Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD` — **PD Review with Austin** (primary Austin-class source; plain text, `.txt`, or `.docx`)
+- `Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD.docx` — **PD Review with Austin** (Microsoft Word `.docx`; primary Austin-class source). Legacy plain-text copies without extension are still supported.
 
 - `Transcript/Austin Meeting/Pattern-Data-Austin-YYYY-MM-DD.docx` — shorter Austin engineering-manager meeting (same class as PD Review)
 
@@ -64,7 +64,7 @@ Build or update the dated delivery progress markdown from standup transcripts, *
 
 | --- | --- | --- |
 
-| **PD Review with Austin** | `Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD` | Long review — deployment order, scope, implementation direction, next-up work after wrap-up |
+| **PD Review with Austin** | `Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD.docx` | Long review — deployment order, scope, implementation direction, next-up work after wrap-up |
 
 | **Austin meeting** | `Transcript/Austin Meeting/Pattern-Data-Austin-YYYY-MM-DD.docx` | Shorter EM meeting — same fields |
 
@@ -164,7 +164,7 @@ Leave historical event dates unchanged (e.g. when a CS was uploaded).
 
 
 
-Transcripts may be Arabic/English mixed `.docx` **or** plain text (PD Review files often have **no extension**). Run from the skill directory (write UTF-8 temp file; do not print to console on Windows):
+Transcripts are Arabic/English mixed **Microsoft Word** `.docx` files (standup, PD Review, Austin meeting). Legacy PD Review plain-text copies without extension still work. **Always pass the `.docx` path** to the extractor — `extract_standup.py` only parses Word when the filename ends in `.docx`. Run from the skill directory (write UTF-8 temp file; do not print to console on Windows):
 
 
 
@@ -172,11 +172,15 @@ Transcripts may be Arabic/English mixed `.docx` **or** plain text (PD Review fil
 
 python scripts/extract_standup.py "Transcript/ChartSwap Daily Stand up/ChartSwap-Daily-Stand-up-YYYY-MM-DD.docx" -o _standup_extract.txt
 
-python scripts/extract_standup.py "Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD" -o _austin_extract.txt
+python scripts/extract_standup.py "Transcript/PDReviewWithAustin/PDReviewWithAustin-YYYY-MM-DD.docx" -o _austin_extract.txt
 
 python scripts/extract_standup.py "Transcript/Austin Meeting/Pattern-Data-Austin-YYYY-MM-DD.docx" -o _austin_extract.txt
 
 ```
+
+
+
+**PD Review `.docx` content:** The Word file may include both the **meeting transcript** (speaker lines, timestamps) and **reference material** (e.g. Pending Wordings review document). Use transcript sections for **Daily update from Austin** (deployment priority, scope, dates). Use wordings tables for **Risks**, wordings delivery gates, and tracker wordings — do not treat a wordings-only extract as an Austin deployment meeting.
 
 
 
