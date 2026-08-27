@@ -7,8 +7,8 @@
 
 | Phase | Owner | Status | What's done | What's left | Target | Forecast | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| **PD Sandbox finalize** | Team | In progress | <ul><li>Jira sync **2026-08-27:** all **9** open stories still **In Progress** — no overnight status moves</li><li>[PD Review file — 2026-08-26](../Transcript/PDReviewWithAustin/PDReviewWithAustin-2026-08-26.docx): **21 pending wordings** in official review doc — **4 BLOCKING** consent items (W-001–W-004)</li><li>Islam mapping wording sentences to **custom labels** on open PRs (standup **2026-08-26**); Michael confirmed no provider-portal code touches ChartSwap</li></ul> | <ul><li>Client approval on **4 blocking** consent wordings (AutoPay, T&C SSO, over-threshold, card re-consent)</li><li>Islam: implement approved/pending wordings as custom labels; push to each open PR</li><li>Merge open PRs; build deploy packages for remaining features</li><li>Align Austin / Van on record types; PCI cart look</li></ul> | Rolling | — | **Thursday 2026-08-27** holiday — no standup. Sarah on PTO |
-| **UAT Sandbox deploy** | Team | In progress | <ul><li>Payment Management deploy packages built; epic [LNI-2309](https://datavant.atlassian.net/browse/LNI-2309) **UAT** in Jira</li><li>Austin Change Set hold on SPM/AutoPay — no new UAT uploads until final approval (Jira comments **2026-08-25**)</li></ul> | <ul><li>Austin has **not started** promoting features — still busy with other work</li><li>Remaining features **one at a time** after Payment Management wrap-up</li></ul> | **2026-08-31** | **2026-08-31** | Austin is shipping other work first, then Pattern Data |
+| **PD Sandbox finalize** | Team | In progress | <ul><li><strong>PD Review 2026-08-26:</strong> Austin — ready to <strong>start packaging</strong>; Michael to build deploy packages for <strong>all features</strong> (RequestShare included); no UAT overlaps blocking PD work</li><li>Provider-portal isolation confirmed; threshold, attachment, and after-completed fixes <strong>done</strong></li><li>PCI cart — <strong>functionally done</strong>; deploy <strong>independently</strong>; iframe design tweak only if needed (smallest impact)</li><li>Islam implementing wordings as custom labels (standup **2026-08-26**)</li></ul> | <ul><li>Michael: map feature dependencies (request wizard, AutoPay, prefill, etc.); build <strong>3 changesets</strong> (settings/fields, code, rollback) — target <strong>Sunday</strong> focus, check-in <strong>Monday</strong></li><li>Align with Van on request-sync upload / request ID behavior ([LNI-3226](https://datavant.atlassian.net/browse/LNI-3226))</li><li>Answer client on SSO production-credentials test (pre-prod limitation)</li><li>Payment transaction flow documentation for Austin</li><li>Client approval on blocking consent wordings</li></ul> | Rolling | — | **Thursday 2026-08-27** holiday — no standup. Sarah on PTO |
+| **UAT Sandbox deploy** | Team | In progress | <ul><li>Epic [LNI-2309](https://datavant.atlassian.net/browse/LNI-2309) **UAT** in Jira; old Payment Management build already in UAT — pddev is latest</li><li><strong>PD Review 2026-08-26:</strong> Austin won't push conflicting work to UAT; Michael <strong>cleared to start packaging</strong>; Luis can refresh UAT from master when Austin gives go-ahead</li></ul> | <ul><li>Finish package build on pddev; promote <strong>one consolidated push</strong> (or mapped smaller sets if dependency review allows)</li><li>Resolve what's in UAT — deploy or rollback before back-merge</li><li>PCI cart as separate deploy if scoped independently</li></ul> | **2026-08-31** | **2026-08-31** | Austin shifting from wait mode to <strong>package-and-move</strong> — Sunday/Monday packaging focus |
 | **Production** | Team | Not started | — | <ul><li>UAT sign-off; production deploy packages per feature</li></ul> | **2026-09-30** | **2026-09-30** | Live release after UAT sign-off per Austin |
 
 ---
@@ -19,13 +19,14 @@
 
 | Priority | Feature / story | Environment | Status |
 | --- | --- | --- | --- |
-| 1 | Wrap current PD details — [LNI-3137](https://datavant.atlassian.net/browse/LNI-3137) Payment Management + file attach | UAT sandbox | Attach retest with Austin; standup **2026-08-26**: UAT promotion still **not started** |
-| 2 | **Approved Fee overhaul** | pddev | Next after wrap-up (Austin, 2026-08-20) |
-| 3 | **PCI cart** (not MPI) | pddev | Look this week — functionally works; page redesign possible |
-| — | Remaining 8 stories | pddev → UAT | Queue per Austin — record types for status sync TBD with Van |
-| — | **Client wordings** | All features | **21** items pending in official review doc (**2026-08-26**); **4 BLOCKING** (W-001–W-004 consent/legal) — blocks attach to deploy packages |
+| 1 | **All PD features** — consolidated deploy packages (RequestShare included) | pddev → UAT | **PD Review 2026-08-26:** Michael build **3 changesets** (settings/fields/connected apps · code · rollback); map dependencies to see if smaller sets possible — **Sunday** main focus, **Monday** check-in |
+| 2 | **PCI cart** | pddev → UAT | Functionally **done** — deploy **independently**; optional iframe design tweak (smallest impact only) |
+| 3 | [LNI-3226](https://datavant.atlassian.net/browse/LNI-3226) request sync | pddev | Clarify request-sync semantics with Van; post-completed upload / request ID behavior — Austin messaging Van |
+| — | SSO production-credentials test | Client question | Cannot test prod SSO creds until production push — Michael to confirm classes and give Austin a solid answer |
+| — | Payment transaction flow | Documentation | Austin still wants clear doc on transaction permutations and request/fulfillment field updates |
+| — | **Client wordings** | All features | **21** pending items (**4 BLOCKING** consent) — blocks attach to deploy packages until approved |
 
-*Last Austin input:* Deployment plan from [PD Review with Austin — 2026-08-20](../Transcript/PDReviewWithAustin/PDReviewWithAustin-2026-08-20). [PD Review file — 2026-08-26](../Transcript/PDReviewWithAustin/PDReviewWithAustin-2026-08-26.docx) is the **Pending Wordings Official Review** document (21 items, not a deployment meeting). Day-to-day from [ChartSwap Daily Stand-up — 2026-08-26](../Transcript/ChartSwap%20Daily%20Stand%20up/ChartSwap-Daily-Stand-up-2026-08-26.docx). **Thursday 2026-08-27** holiday — no standup. Sarah on PTO.
+*Last Austin input:* [PD Review with Austin — 2026-08-26](../Transcript/PDReviewWithAustin/PDReviewWithAustin-2026-08-26.docx) (30 min meeting). Day-to-day from [ChartSwap Daily Stand-up — 2026-08-26](../Transcript/ChartSwap%20Daily%20Stand%20up/ChartSwap-Daily-Stand-up-2026-08-26.docx). **Thursday 2026-08-27** holiday — no standup. Islam Jira access — Austin no update yet (**2026-08-26**). Sarah on PTO.
 
 ---
 
@@ -41,7 +42,7 @@
 
 | Story | Assignee | Jira status | Delivery gates | Next step |
 | --- | --- | --- | --- | --- |
-| [LNI-3137](https://datavant.atlassian.net/browse/LNI-3137) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#220)</li><li><strong>Packages:</strong> Forward ✓ · Rollback ✓ · Settings ✓</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> Tested</li><li><strong>UAT sandbox:</strong> Upload in progress — Austin Change Set hold (open code set on pddev, not uploaded)</li></ul> | **Update 2026-08-27:** Jira unchanged. Merge PR #220; finish UAT package upload after Austin approval |
+| [LNI-3137](https://datavant.atlassian.net/browse/LNI-3137) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#220)</li><li><strong>Packages:</strong> Forward ✓ · Rollback ✓ · Settings ✓</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> Tested</li><li><strong>UAT sandbox:</strong> Old PM build in UAT — pddev is latest; repackage per Austin **2026-08-26</strong></li></ul> | **Update 2026-08-26:** Austin — same package for UAT and prod; start consolidated packaging. Merge PR #220; include in 3-pack build |
 
 ### [LNI-2310 — AutoPay Submission Flow](https://datavant.atlassian.net/browse/LNI-2310)
 
@@ -59,7 +60,7 @@
 
 | Story | Assignee | Jira status | Delivery gates | Next step |
 | --- | --- | --- | --- | --- |
-| [LNI-3226](https://datavant.atlassian.net/browse/LNI-3226) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#221, #222)</li><li><strong>Packages:</strong> Pending · Pending · —</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> In progress</li><li><strong>UAT sandbox:</strong> Not deployed</li></ul> | **Update 2026-08-26:** Gap-cluster QA closed — zero FAIL/PARTIAL on qa/index.html. Align Austin / Van on record types; send Nabawy the record-type table |
+| [LNI-3226](https://datavant.atlassian.net/browse/LNI-3226) | Michael | In Progress | <ul><li><strong>PR:</strong> In review (#221, #222)</li><li><strong>Packages:</strong> Pending · Pending · —</li><li><strong>Wordings:</strong> Pending approval</li><li><strong>PD sandbox:</strong> In progress</li><li><strong>UAT sandbox:</strong> Not deployed</li></ul> | **Update 2026-08-26:** Austin — call it <strong>request sync</strong> (not status sync); upload trigger OK. Van alignment on post-completed upload / request ID on upload object — Austin messaging Van |
 
 *Open subtasks*
 
@@ -93,9 +94,9 @@
 
 | Member | Focus |
 | --- | --- |
-| **Michael** | [LNI-3137](https://datavant.atlassian.net/browse/LNI-3137) Payment Management PR #220 + UAT CS; [LNI-3223](https://datavant.atlassian.net/browse/LNI-3223) AutoPay PR #223; [LNI-3226](https://datavant.atlassian.net/browse/LNI-3226) Status Sync PR #221/#222; [LNI-3139](https://datavant.atlassian.net/browse/LNI-3139) Prefill PR #219; [LNI-3142](https://datavant.atlassian.net/browse/LNI-3142) Invoice S3 PR #216; [LNI-3225](https://datavant.atlassian.net/browse/LNI-3225) PR #211–#213; [LNI-3769](https://datavant.atlassian.net/browse/LNI-3769) PR #231 — from Jira |
-| **Sarah** | [LNI-3224](https://datavant.atlassian.net/browse/LNI-3224) SAML SSO PR #193; [LNI-3763](https://datavant.atlassian.net/browse/LNI-3763) RequestShare — from Jira. PTO — Michael covers if needed |
-| **Islam** | Implement **21 pending wordings** as custom labels on open PRs (per Michael); **4 BLOCKING** consent items (W-001–W-004) need client approval before package attach |
+| **Michael** | **PD Review 2026-08-26:** build consolidated **3 changesets** for all features (Sunday focus); map dependencies; PCI cart **independent** deploy; payment transaction flow doc; SSO prod-creds answer for Austin; open PRs #219–#223, #231 |
+| **Sarah** | [LNI-3224](https://datavant.atlassian.net/browse/LNI-3224) SSO PR #193; [LNI-3763](https://datavant.atlassian.net/browse/LNI-3763) RequestShare — included in consolidated package. PTO — Michael covers |
+| **Islam** | Custom-label wordings on open PRs; **21 pending** / **4 BLOCKING** consent items still need client approval |
 
 ---
 
@@ -126,5 +127,5 @@ Each item below is stated as a **condition → consequence**, with a mitigation 
 
 | # | Risk / challenge | Mitigation | Severity |
 | --- | --- | --- | --- |
-| 1 | **Islam cannot log defects or update Jira.** Islam has no Jira account — QA progress is invisible in the tracker and defects may be tracked only in standup or chat. Datavant IT said **HR approval** is required; Austin's follow-up with Datavant HR/IT is inconsistent. | <ul><li>**Austin** owns the Datavant HR/IT ticket until Islam can log in</li><li>**Hamed / Nabawy** keep following Austin (week of **2026-08-24** target slipped — still open **2026-08-27**)</li></ul> | Medium |
+| 1 | **Islam cannot log defects or update Jira.** Islam has no Jira account — QA progress is invisible in the tracker and defects may be tracked only in standup or chat. Datavant IT said **HR approval** is required; Austin's follow-up with Datavant HR/IT is inconsistent. | <ul><li>**Austin** owns the Datavant HR/IT ticket — <strong>no update</strong> on PD Review **2026-08-26</strong> (message out, waiting on reply)</li><li>**Hamed / Nabawy** keep following Austin (still open **2026-08-27**)</li></ul> | Medium |
 | 2 | **Client wordings (PATTERNDATA) are not approved for any feature.** Official review doc (**2026-08-26**) lists **21** pending wordings — **4 BLOCKING** consent/legal items (W-001 AutoPay, W-002 T&C SSO, W-003 over-threshold, W-004 card re-consent). Deploy packages cannot be finalized with approved copy until Legal/Business sign-off. | <ul><li>Islam implementing wordings as **custom labels** on open PRs; Hamed shared doc — track which of **21** items are approved vs pending</li><li>Escalate **4 BLOCKING** consent wordings to Mariah Ritter / Legal — highest priority per doc</li><li>Do not attach PATTERNDATA text to packages until approved</li></ul> | Medium |
