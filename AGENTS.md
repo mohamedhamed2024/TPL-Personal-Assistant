@@ -9,7 +9,7 @@ AI workspace for tracking and reporting Pattern Data integration delivery progre
 | **Client** | Ontellus LLC |
 | **Product** | ChartSwap — record ordering, tracking, and delivery portal |
 | **Active feature** | [DVI-1086](https://datavant.atlassian.net/browse/DVI-1086) — PatternData SSO |
-| **Go-live goal** | UAT sandbox **2026-08-31** · Production **2026-09-30** |
+| **Go-live goal** | UAT sandbox **2026-09-01** · Production **2026-09-08** |
 | **Jira cloud ID** | `eade365b-968b-4bd2-ad93-66539cfaeb93` (datavant.atlassian.net) |
 | **Engineering manager** | **Austin** — sets deployment order and scope; plan may change frequently |
 | **Delivery focus** | PD sandbox finalize → UAT sandbox (feature-by-feature, Austin-directed) → Production |

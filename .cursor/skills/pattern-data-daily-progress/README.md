@@ -75,7 +75,7 @@ Build or update the Pattern Data delivery progress report from ChartSwap standup
 | `Transcript/PDReviewWithAustin/PDReviewWithAustin-*.docx` | PD Review with Austin (Microsoft Word meeting transcript; may include embedded wordings reference) |
 | `Transcript/Austin Meeting/Pattern-Data-Austin-*.docx` | Shorter Austin engineering-manager meeting |
 | `Testing Updates.md` | Testing tracker to align (optional) |
-| Jira feature DVI-1086 | Story/subtask status source of truth |
+| `references/domain-decisions.md` | Standing delivery targets (UAT **2026-09-01** · Production **2026-09-08**), Austin plan, team rules |
 | `.env.local` | `TEAMS_WEBHOOK_URL` (gitignored) |
 
 ## Weekday morning automation → Teams
@@ -97,4 +97,4 @@ Create the live job in the **Agents Window** (`/automate`) or at [cursor.com/aut
 | **Location** | `.cursor/skills/pattern-data-daily-progress/` |
 | **Source** | Project (local) |
 | **Installed** | 2026-06-09 |
-| **Revamped** | 2026-08-19 — DVI-1086 feature-delivery model; 2026-08-20 — Austin plan, no waves; 2026-08-23 — PD Review with Austin source |
+| **Revamped** | 2026-08-19 — DVI-1086 feature-delivery model; 2026-08-20 — Austin plan, no waves; 2026-08-23 — PD Review with Austin source; **2026-09-01** — UAT **2026-09-01** / Production **2026-09-08** targets |

@@ -8,8 +8,10 @@ Active work is **PD sandbox finalize → UAT sandbox (feature-by-feature) → Pr
 
 | Phase | Target |
 | --- | --- |
-| UAT sandbox | **2026-08-31** |
-| Production | **2026-09-30** |
+| UAT sandbox | **2026-09-01** |
+| Production | **2026-09-08** |
+
+**Updated 2026-09-01** (stakeholder / PM input): UAT moved from **2026-08-31** → **2026-09-01**; Production moved from **2026-09-30** → **2026-09-08**. Apply these defaults in every new progress report header, Status at a glance Target/Forecast columns, and Path to UAT & Production section headers unless an **Austin-class** transcript or explicit user override changes them.
 
 Dates are **indicative** — **Austin** (engineering manager) may change deployment order or targets after each meeting. Update from the latest **Austin-class** transcript when provided.
 

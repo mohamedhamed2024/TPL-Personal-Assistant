@@ -580,7 +580,7 @@ def uat_ready(markdown: str) -> str:
 def targets_line(markdown: str) -> str:
     match = re.search(r"\*\*Targets:\*\*\s*(.+)", markdown)
     if not match:
-        return "UAT 2026-08-31 · Prod 2026-09-30"
+        return "UAT 2026-09-01 · Prod 2026-09-08"
     return re.sub(r"\*\*", "", match.group(1)).strip()
 
 

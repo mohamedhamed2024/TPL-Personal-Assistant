@@ -14,7 +14,7 @@
 # Pattern Data — delivery progress
 
 **Feature:** [DVI-1086](https://datavant.atlassian.net/browse/DVI-1086) · **As of:** YYYY-MM-DD  
-**Targets:** UAT sandbox **2026-08-31** · Production **2026-09-30**
+**Targets:** UAT sandbox **2026-09-01** · Production **2026-09-08**
 ```
 
 Do **not** include a separate glossary block. Spell out jargon on first use in section text (see Writing style). Do **not** link to `.cursor/` paths in the deliverable.
@@ -60,8 +60,8 @@ Use HTML lists inside table cells. **Keep each cell concise — plan-affecting u
 | Phase | Owner | Status | What's done | What's left | Target | Forecast | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | **PD Sandbox finalize** | Team | In progress | `<li>` today's completed dev/QA items on pddev | `<ul><li>` open features still being coded or retested | Rolling | — | Dev team finishing Pattern Data features on the **development sandbox** before any UAT move |
-| **UAT Sandbox deploy** | Team | Not started / In progress | `<li>` features with deploy packages validated on UAT | `<ul><li>` remaining features queued; **one feature per release** | **2026-08-31** | — | Each feature needs Forward + Rollback packages (and Settings if applicable) tested on UAT |
-| **Production** | Team | Not started | — | `<ul><li>` UAT sign-off; production deploy packages per feature | **2026-09-30** | — | Live release after UAT sign-off per Austin's deployment plan |
+| **UAT Sandbox deploy** | Team | Not started / In progress | `<li>` features with deploy packages validated on UAT | `<ul><li>` remaining features queued; **one feature per release** | **2026-09-01** | — | Each feature needs Forward + Rollback packages (and Settings if applicable) tested on UAT |
+| **Production** | Team | Not started | — | `<ul><li>` UAT sign-off; production deploy packages per feature | **2026-09-08** | — | Live release after UAT sign-off per Austin's deployment plan |
 
 - **What's done** — `<li>` bullets: **today's** closed subtasks, CS uploads validated, stories marked ready
 - **What's left** — `<ul><li>` bullets: open stories, pending CS, wordings approval, UAT promotion queue
@@ -186,7 +186,7 @@ Standing note (assign to **Hamed** or **Nabawy** in Risks mitigations when still
 
 **UAT-ready progress:** N/M features UAT-ready (see Feature delivery tracker)
 
-### To reach UAT sandbox (target 2026-08-31)
+### To reach UAT sandbox (target 2026-09-01)
 
 - [ ] All in-scope stories finalized/refactored on **pddev**
 - [ ] Each feature: **Forward + Rollback** deploy packages built (Settings package if needed)
@@ -194,7 +194,7 @@ Standing note (assign to **Hamed** or **Nabawy** in Risks mitigations when still
 - [ ] **Client wordings (PATTERNDATA)** approved and attached to each package
 - [ ] Code review complete — pull request merged for each feature
 
-### To reach Production (target 2026-09-30)
+### To reach Production (target 2026-09-08)
 
 - [ ] UAT validation complete for every feature
 - [ ] Austin / client sign-off on UAT completion (per current deployment plan)

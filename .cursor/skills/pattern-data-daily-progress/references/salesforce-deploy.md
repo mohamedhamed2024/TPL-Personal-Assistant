@@ -94,8 +94,8 @@ If a story has **no open pull request**, mark **Ready — finalize code review &
 
 | Milestone | Target date |
 | --- | --- |
-| All features on UAT sandbox | **2026-08-31** |
-| Production go-live | **2026-09-30** |
+| All features on UAT sandbox | **2026-09-01** |
+| Production go-live | **2026-09-08** |
 
 Adjust **Forecast** in Status at a glance only when **Austin meeting** or standup confirms a slip.
 

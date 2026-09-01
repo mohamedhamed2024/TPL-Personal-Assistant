@@ -252,6 +252,8 @@ Put assigned next steps in **tracker Next step**, **Status at a glance**, or **R
 
 Apply standing business rules. See [references/domain-decisions.md](references/domain-decisions.md).
 
+**Default delivery targets** (header, Status at a glance, Path to UAT & Production): UAT sandbox **2026-09-01** · Production **2026-09-08** — unless an Austin-class transcript or explicit user override changes them.
+
 
 
 ### Step 7 — Testing Updates.md (optional)
