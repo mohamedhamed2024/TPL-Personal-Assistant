@@ -1,0 +1,207 @@
+Mohamed Nabawy
+0 minutes 4 seconds0:04
+Mohamed Nabawy 0 minutes 4 seconds
+The trial logic can double charge on lost response, so this is another one.
+Mohamed Nabawy 0 minutes 10 seconds
+Okay, so this is, I know that you asked me to post these comments, I just posted Michael, but this is another one. I do believe this was already shared with you from the original review that you already resolved it.
+MG
+
+Michael Girgis
+0 minutes 16 seconds0:16
+Michael Girgis 0 minutes 16 seconds
+Yeah, yeah, yeah.
+
+Mohamed Nabawy
+0 minutes 28 seconds0:28
+Mohamed Nabawy 0 minutes 28 seconds
+But, but.
+AM
+
+Austin Moss
+0 minutes 28 seconds0:28
+Austin Moss 0 minutes 28 seconds
+So what is a lost response here? So we have something like this already in the portal.
+Austin Moss 0 minutes 36 seconds
+Right, to where, yeah, for some reason, we...
+Austin Moss 0 minutes 42 seconds
+like the pay flow response gets lost. There's a mechanism on the homepage to try again, right? And it's kind of like what, it's kind of like when you are going to call pay flow, you have a chart swap identifier, and then you ultimately get a pay flow identifier.
+Austin Moss 1 minute 3 seconds
+Right, and that's like the PFI and V-nums, right? So if you have that chart swap identifier, the PFI and V-num, which is what we toss in, that's an indication that we tried to do something.
+Austin Moss 1 minute 16 seconds
+And so what we then do is, you know, the payments just kind of like, it's not processed, but it's sort of in like a processing state so that we can see if a request has a PFINV num that tells us that we need to not retry the payment.
+Austin Moss 1 minute 36 seconds
+But check pay flow, but using that PFINV now to say, hey, did you get a successful payment from this thing? And if you did, then complete the processing that should have happened had we gotten the response correctly, right?
+AM
+Austin Moss
+1 hour 1 minute 35 seconds1:01:35
+Austin Moss 1 hour 1 minute 35 seconds
+OK, and so again, and if you do that, right?
+Austin Moss 1 hour 1 minute 39 seconds
+Even if you didn't update the button to be disabled, which the button should work the same way, it should be disabled if there's an already pending transaction. Even if you didn't do that, the button click goes to a place in the code where ultimately we attempt to create a new transaction and you would hit the same thing, the same blocker that would say.
+MG
+Michael Girgis
+1 hour 1 minute 48 seconds1:01:48
+Michael Girgis 1 hour 1 minute 48 seconds
+Mm.
+AM
+Austin Moss
+1 hour 2 minutes1:02:00
+Austin Moss 1 hour 2 minutes
+Before I create this transaction, do you already have one? That's pending. And if I do, just don't do anything, right? But you'll have that doubly.
+Austin Moss 1 hour 2 minutes 11 seconds
+checked by having that but disabled as well. So again, think about all the various places in the code where things need to be disabled if there is a transaction already being processed or already pending.
+MG
+Michael Girgis
+1 hour 2 minutes 14 seconds1:02:14
+Michael Girgis 1 hour 2 minutes 14 seconds
+You.
+AM
+Austin Moss
+1 hour 2 minutes 26 seconds1:02:26
+Austin Moss 1 hour 2 minutes 26 seconds
+And it's just good from a UI perspective to block them then and there. But also, anytime we try to create a new transaction, which inside of the transaction, we try to do the actual pay flow call, we should block it if there's one already pending. And again, anything that's pending will get handled.
+MG
+Michael Girgis
+1 hour 2 minutes 32 seconds1:02:32
+Michael Girgis 1 hour 2 minutes 32 seconds
+Mm.
+Michael Girgis 1 hour 2 minutes 44 seconds
+Mhm.
+AM
+Austin Moss
+1 hour 2 minutes 46 seconds1:02:46
+Austin Moss 1 hour 2 minutes 46 seconds
+Buy the job.
+MG
+Michael Girgis
+1 hour 2 minutes 49 seconds1:02:49
+Michael Girgis 1 hour 2 minutes 49 seconds
+Okay.
+Michael Girgis 1 hour 2 minutes 51 seconds
+Yes.
+AM
+Austin Moss
+1 hour 2 minutes 53 seconds1:02:53
+Austin Moss 1 hour 2 minutes 53 seconds
+Does all that kind of make sense where we're trying to get to, so...
+Austin Moss 1 hour 2 minutes 58 seconds
+Like, like the three big things we have here are, try to write this out.
+Austin Moss 1 hour 3 minutes 3 seconds
+Just up at the top here.
+Austin Moss 1 hour 3 minutes 6 seconds
+Van.
+Austin Moss 1 hour 3 minutes 10 seconds
+Pending transaction to deem transact transaction.
+Austin Moss 1 hour 3 minutes 19 seconds
+Job.
+Austin Moss 1 hour 3 minutes 21 seconds
+transaction.
+Austin Moss 1 hour 3 minutes 24 seconds
+Gflow status job.
+Austin Moss 1 hour 3 minutes 28 seconds
+Remove.
+Austin Moss 1 hour 3 minutes 31 seconds
+Quest.
+Austin Moss 1 hour 3 minutes 33 seconds
+Right.
+Austin Moss 1 hour 3 minutes 36 seconds
+Okay, just recovery process.
+Austin Moss 1 hour 3 minutes 42 seconds
+Yes.
+Austin Moss 1 hour 3 minutes 45 seconds
+Irene being handled.
+Austin Moss 1 hour 3 minutes 48 seconds
+by a pending transaction.
+Austin Moss 1 hour 3 minutes 53 seconds
+Three.
+Austin Moss 1 hour 3 minutes 57 seconds
+Wherever in the code.
+Austin Moss 1 hour 4 minutes 1 second
+You start the transaction process.
+Austin Moss 1 hour 4 minutes 6 seconds
+First, check if transaction exists.
+Austin Moss 1 hour 4 minutes 12 seconds
+Sending.
+Austin Moss 1 hour 4 minutes 15 seconds
+For the requests.
+Austin Moss 1 hour 4 minutes 20 seconds
+For.
+Austin Moss 1 hour 4 minutes 22 seconds
+Save all the buttons.
+Austin Moss 1 hour 4 minutes 30 seconds
+If the request is on a...
+Austin Moss 1 hour 4 minutes 37 seconds
+Transaction.
+Austin Moss 1 hour 4 minutes 42 seconds
+Is there anything else we're missing here?
+Austin Moss 1 hour 4 minutes 46 seconds
+Based on, so we know we need a job.
+Austin Moss 1 hour 4 minutes 50 seconds
+We know we need to update the current homepage recovery process so that it doesn't.
+Austin Moss 1 hour 4 minutes 55 seconds
+mess with anything that the pending transactions are doing.
+Austin Moss 1 hour 5 minutes
+We know we need to update the code.
+Austin Moss 1 hour 5 minutes 4 seconds
+for the transactions to start right at the very core of this whole thing, to make sure that we're checking first to see if there is a pending, if that request we're trying to do something for exists on a pending transaction, that we're not doing anything with it.
+Austin Moss 1 hour 5 minutes 24 seconds
+Do nothing if it does exist.
+Austin Moss 1 hour 5 minutes 30 seconds
+And then also, just from a user standpoint, disable any buttons or just don't show them if the request is on a pending transaction. I would even say just don't show them.
+Austin Moss 1 hour 5 minutes 41 seconds
+So that you don't add any confusion.
+Austin Moss 1 hour 5 minutes 45 seconds
+And again, hopefully this is not something that's seen often, because either within the time frame of someone going to this request page, hopefully that status job.
+Austin Moss 1 hour 5 minutes 59 seconds
+check thing ran and completed and got the transaction to the appropriate state and everything's downstream. That should happen, happens.
+MG
+Michael Girgis
+1 hour 6 minutes 15 seconds1:06:15
+Michael Girgis 1 hour 6 minutes 15 seconds
+Okay.
+AM
+Austin Moss
+1 hour 6 minutes 16 seconds1:06:16
+Austin Moss 1 hour 6 minutes 16 seconds
+Does it make sense?
+MG
+Michael Girgis
+1 hour 6 minutes 19 seconds1:06:19
+Michael Girgis 1 hour 6 minutes 19 seconds
+I need to check.
+AM
+Austin Moss
+1 hour 6 minutes 20 seconds1:06:20
+Austin Moss 1 hour 6 minutes 20 seconds
+Yeah, I know there's a lot there, but incredibly important that if, you know, this wasn't captured in the first go-around, that it has to be here for this go-around. Because we can't get ourselves to a place where we're doing anything with double charges.
+Austin Moss 1 hour 6 minutes 47 seconds
+Okay.
+Austin Moss 1 hour 6 minutes 49 seconds
+Let's, I do got to jump to another meeting.
+Austin Moss 1 hour 6 minutes 54 seconds
+Let's work to get this done. All hands on deck. Super important. We can turn this around quickly. Let me deal with potentially having to push.
+Austin Moss 1 hour 7 minutes 4 seconds
+the deployment back for this, but this is, you know, this is a showstopper that does have to be handled and has to be handled resiliently and correctly.
+Austin Moss 1 hour 7 minutes 16 seconds
+So let me dump some, dump everything in here.
+Austin Moss 1 hour 7 minutes 23 seconds
+Yeah, take a look at it and let me know where we get and, you know, continually run the cloud code reviews if needed and just focus on this for right now. Don't worry about getting things into UAT. I'll deal with that and the people who will be asking about that.
+Austin Moss 1 hour 7 minutes 43 seconds
+Goals.
+Austin Moss 1 hour 7 minutes 46 seconds
+All right, keep me posted on how it goes. Talk to you guys later.
+
+Mohamed Nabawy
+1 hour 7 minutes 53 seconds1:07:53
+Mohamed Nabawy 1 hour 7 minutes 53 seconds
+Thank you.
+MG
+Michael Girgis
+1 hour 7 minutes 53 seconds1:07:53
+Michael Girgis 1 hour 7 minutes 53 seconds
+Two.
+AM
+Austin Moss
+1 hour 7 minutes 55 seconds1:07:55
+Austin Moss 1 hour 7 minutes 55 seconds
+Yes.
