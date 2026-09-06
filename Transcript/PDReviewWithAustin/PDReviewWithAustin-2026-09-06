@@ -1,0 +1,170 @@
+
+Austin Moss 0 minutes 5 seconds
+And you have pending.
+Austin Moss 0 minutes 7 seconds
+I never got a response back. And so something after something times out, I should be, yeah, pending unresolved.
+Austin Moss 0 minutes 18 seconds
+Right, and that pending unresolved, assuming we are updating statuses correctly, right? We don't want things getting stuck and pending currently processing. If something is pending currently processing, and there's a...
+Austin Moss 0 minutes 33 seconds
+Code failure or...
+Austin Moss 0 minutes 37 seconds
+Response failure, like not a true response.
+Austin Moss 0 minutes 42 seconds
+about the card transaction itself from Payflow.
+Austin Moss 0 minutes 48 seconds
+It should be in this pending, you know.
+Austin Moss 0 minutes 52 seconds
+Unresolved, like I like unresolved better, but again.
+Austin Moss 0 minutes 57 seconds
+only pending unresolved should be going through this because we do not want that job to pick up things that are currently being processed. You want that process to just complete. And again, if that currently processing one does have an issue, it should then go to the pending unresolved and then it would get picked up by the job.
+MG
+Michael Girgis
+1 hour 19 minutes 22 seconds1:19:22
+Michael Girgis 1 hour 19 minutes 22 seconds
+At this point, still working on this one.
+AM
+Austin Moss
+1 hour 19 minutes 22 seconds1:19:22
+Austin Moss 1 hour 19 minutes 22 seconds
+But what?
+Austin Moss 1 hour 19 minutes 27 seconds
+Yeah, I think you just make sure the button gets disabled. Obviously, if I go to a page and the transaction exists, I shouldn't be able to click it, but also the second I click that button, it should be disabled.
+MG
+Michael Girgis
+1 hour 19 minutes 30 seconds1:19:30
+Michael Girgis 1 hour 19 minutes 30 seconds
+If...
+AM
+Austin Moss
+1 hour 19 minutes 43 seconds1:19:43
+Austin Moss 1 hour 19 minutes 43 seconds
+Because again, you just don't want multiple transactions to get picked up there.
+Austin Moss 1 hour 19 minutes 49 seconds
+Um...
+Austin Moss 1 hour 19 minutes 56 seconds
+Obviously, it's a lot here, but again, it's super important not only for this project, but for everything we're doing on a go-forward basis, right? If this transaction model is, you know...
+Austin Moss 1 hour 20 minutes 10 seconds
+Where we're going to be moving to with a lot of things, we want to make sure that it works. We don't double charge, we clean up anything that's unresolved, and we don't impact existing functionality that relies on stuff.
+Austin Moss 1 hour 20 minutes 26 seconds
+I don't know if you've done a scan of the P.F.I.N.V. or the pay key to see if, so obviously on the request.
+Austin Moss 1 hour 20 minutes 37 seconds
+We should be populating and clearing and doing whatever with those values the exact same way as it's done today.
+Austin Moss 1 hour 20 minutes 46 seconds
+in production. So we want to, because reporting, people report off that kind of stuff. So even though our transaction things are kind of going through a different route, we should still be updating and clearing the request appropriately. And so you probably want to take a look at the.
+Austin Moss 1 hour 21 minutes 5 seconds
+pay flow checkout page and just make sure that really you're looking for where does the PFIND not get cleared.
+Austin Moss 1 hour 21 minutes 14 seconds
+and making sure that you're clearing it from request at the correct time. Again, you'll never clear it from a transaction.
+Austin Moss 1 hour 21 minutes 23 seconds
+Right, because the transaction picks up what that value is, and and and and you know uses it.
+Austin Moss 1 hour 21 minutes 32 seconds
+But requests, they do get that value cleared. So again, you just want to make sure that you find anywhere in the code where that value is used and make sure that the various cases for when it gets set cleared, whatever.
+Austin Moss 1 hour 21 minutes 50 seconds
+key, paid queue, paid queue, whatever it is. And all those are kind of functioning the same way so that reporting still works the exact same way.
+Austin Moss 1 hour 22 minutes 3 seconds
+And let me just make a note of that, just so we don't lose that one either.
+Austin Moss 1 hour 22 minutes 13 seconds
+related to payments, payments on the request. I don't think they exist anywhere, but just take a look, Barda.
+Austin Moss 1 hour 22 minutes 25 seconds
+Voice.
+Austin Moss 1 hour 22 minutes 29 seconds
+Invoice, invoice details.
+Austin Moss 1 hour 22 minutes 31 seconds
+Kind of their own thing.
+Austin Moss 1 hour 22 minutes 39 seconds
+I know we got a job here.
+Austin Moss 1 hour 22 minutes 45 seconds
+We're kind of doing our own thing here. So these should already be happening correctly because these are kind of sandwiched inside of the transaction. So these ones, and obviously for invoice and invoice details, I don't think they get cleared ever.
+Austin Moss 1 hour 23 minutes 4 seconds
+Make sure they get cleared.
+Austin Moss 1 hour 23 minutes 24 seconds
+And again, a lot of that clearing I think is related to the cart, so it might not be a huge deal, but we just need to make sure that we do clear it when appropriate.
+MG
+Michael Girgis
+1 hour 23 minutes 33 seconds1:23:33
+Michael Girgis 1 hour 23 minutes 33 seconds
+Yeah, we need this.
+Michael Girgis 1 hour 23 minutes 37 seconds
+So, yeah, we try to, if the card is a card for use and added to the card, the cost added to the card, we make sure that it's a year before processing how to pay or.
+Michael Girgis 1 hour 23 minutes 50 seconds
+So, I, I, I know that it's motivated to get, yeah, to take this part, but yeah, we also make sure that it's, yeah, okay.
+AM
+Austin Moss
+1 hour 23 minutes 59 seconds1:23:59
+Austin Moss 1 hour 23 minutes 59 seconds
+That's good. Yeah, and initially, like pattern data, it won't have any shopping cart items. But yeah, if we use this for others, yes, if somebody did pay.
+Austin Moss 1 hour 24 minutes 11 seconds
+Via auto pay, you would want to make sure that would be cleared out of any parts.
+Austin Moss 1 hour 24 minutes 17 seconds
+Okay. Is this supposed to be another meeting right now? I never know what my schedule is anymore.
+Austin Moss 1 hour 24 minutes 29 seconds
+Okay, I have to drop.
+Austin Moss 1 hour 24 minutes 36 seconds
+I'll send this out. I'll send the, I don't know, did I send yesterday's meeting? That's our meeting. I don't know if I did.
+MG
+Michael Girgis
+1 hour 24 minutes 41 seconds1:24:41
+Michael Girgis 1 hour 24 minutes 41 seconds
+Yeah.
+Michael Girgis 1 hour 24 minutes 42 seconds
+Yeah, you send me the note back here, you know?
+
+Mohamed Nabawy
+1 hour 24 minutes 43 seconds1:24:43
+Mohamed Nabawy 1 hour 24 minutes 43 seconds
+Yeah, yes, you already sent it this yesterday.
+AM
+Austin Moss
+1 hour 24 minutes 46 seconds1:24:46
+Austin Moss 1 hour 24 minutes 46 seconds
+I did, I gave the meetings you guys access to. Sorry, not just the notes, but...
+Austin Moss 1 hour 24 minutes 51 seconds
+The actual meeting itself.
+MG
+Michael Girgis
+1 hour 24 minutes 52 seconds1:24:52
+Michael Girgis 1 hour 24 minutes 52 seconds
+And, yeah, yeah, for for yesterday, we can, can you?
+AM
+Austin Moss
+1 hour 24 minutes 55 seconds1:24:55
+Austin Moss 1 hour 24 minutes 55 seconds
+Okay.
+Austin Moss 1 hour 24 minutes 56 seconds
+Okay, yeah, I'll make sure I do that for yesterday and today.
+Austin Moss 1 hour 25 minutes 1 second
+A.
+Austin Moss 1 hour 25 minutes 3 seconds
+Okay, again, not trying to be, you know, harsh or critical about this, but I am analyzing it as a very important thing. Again, not just for the future and make sure it works, but also because, you know, we got to get...
+Austin Moss 1 hour 25 minutes 17 seconds
+pattern data out the door here quickly. So just real quick, I know we...
+Austin Moss 1 hour 25 minutes 26 seconds
+And he'll be what?
+Austin Moss 1 hour 25 minutes 30 seconds
+We're going to be out Sunday, Monday.
+Austin Moss 1 hour 25 minutes 33 seconds
+So, very important that come Tuesday.
+Austin Moss 1 hour 25 minutes 37 seconds
+that all of this is, you know, you guys spend Sunday, Monday wrapping all this up, making sure everything is as good as humanly possible, based on everything we've talked about here, so that we can, you know, and try to have the change that's ready. And again, if you have the time, and I highly encourage it,
+Austin Moss 1 hour 25 minutes 59 seconds
+If you look in the code and you notice that, hey, maybe we're mentioning auto pay here when we shouldn't be, that we get that cleaned up because I just don't want any confusing configurations to be around there, right? Auto pay is just a trigger for a transaction and transactions can be of multiple types, a proof fee, credit card, whatever.
+Austin Moss 1 hour 26 minutes 19 seconds
+So again, if you need to shift things around a little bit, and it's not too detrimental to things, I would recommend we do that just so that we have, you know, like a clean.
+Austin Moss 1 hour 26 minutes 30 seconds
+understanding of what everything is.
+Austin Moss 1 hour 26 minutes 33 seconds
+Okay.
+Austin Moss 1 hour 26 minutes 35 seconds
+Reach out if you need anything. Sunday and Monday if you have any questions. I mean, I'm not going anywhere, so I will be around. Just not actively having meetings or anything like that. So just let me know if you need anything. But hope you guys have a good weekend and don't do any of this stuff until Sunday.
+Austin Moss 1 hour 26 minutes 54 seconds
+Enjoy your times.
+SH
+Sarah Hassaan
+1 hour 26 minutes 55 seconds1:26:55
+Sarah Hassaan 1 hour 26 minutes 55 seconds
+Thank you. Thank you so much.
+AM
+Austin Moss
+1 hour 26 minutes 58 seconds1:26:58
+Austin Moss 1 hour 26 minutes 58 seconds
+Alright guys, talk to you later.
